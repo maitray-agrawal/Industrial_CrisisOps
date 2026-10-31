@@ -14,6 +14,15 @@ class ApprovePlanRequest(BaseModel):
     operator_name: Optional[str] = "Lead Industrial Operator"
 
 
+class RejectPlanRequest(BaseModel):
+    operator_name: Optional[str] = None
+    rejected_by: Optional[str] = None
+    reason: Optional[str] = "Physical on-site inspection required before actuation"
+
+    def get_operator_name(self) -> str:
+        return self.operator_name or self.rejected_by or "Shift Supervisor"
+
+
 @router.post("/{incident_id}/investigate", response_model=Dict[str, Any])
 def trigger_incident_investigation(
     incident_id: str,
@@ -60,6 +69,26 @@ def approve_response_plan(
     operator_name = payload.operator_name if payload else "Lead Industrial Operator"
     try:
         result = actuation_engine.approve_action_plan(db, incident_id, operator_name)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{incident_id}/reject", response_model=Dict[str, Any])
+def reject_response_plan(
+    incident_id: str,
+    payload: Optional[RejectPlanRequest] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Supervisor Rejection / Inspection Request: Operator holds action plan and requests physical inspection.
+    """
+    operator_name = payload.get_operator_name() if payload else "Shift Supervisor"
+    reason = payload.reason if payload and payload.reason else "Manual on-site inspection requested before software containment"
+    try:
+        result = actuation_engine.reject_action_plan(db, incident_id, operator_name, reason)
         return result
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))

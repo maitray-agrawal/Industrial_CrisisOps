@@ -1,6 +1,12 @@
+import os
 import pytest
-from fastapi.testclient import TestClient
+from pathlib import Path
 
+# Configure isolated test database before importing application modules
+TEST_DB_PATH = Path(__file__).resolve().parent / "test_crisisops.db"
+os.environ["DATABASE_URL"] = f"sqlite:///{TEST_DB_PATH.as_posix()}"
+
+from fastapi.testclient import TestClient
 from app.main import app
 from app.core.database import Base, engine, SessionLocal, get_db
 from app.db.seed import seed_database
@@ -12,6 +18,12 @@ def setup_test_db():
     Base.metadata.create_all(bind=engine)
     seed_database()
     yield
+    Base.metadata.drop_all(bind=engine)
+    if TEST_DB_PATH.exists():
+        try:
+            TEST_DB_PATH.unlink()
+        except Exception:
+            pass
 
 
 @pytest.fixture

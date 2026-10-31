@@ -8,9 +8,9 @@ This document provides complete, step-by-step instructions for deploying **Indus
 
 ```
                           ┌───────────────────────────────┐
-                          │   Render Static Site           │
+                          │   Render Static Site          │
                           │   (React 18 + Vite 5 SPA)     │
-                          │   https://<frontend>.onrender.com│
+                          │   https://crisisops.onrender.com │
                           └──────────────┬────────────────┘
                                          │
                                    HTTPS / REST API
@@ -19,21 +19,21 @@ This document provides complete, step-by-step instructions for deploying **Indus
                           ┌───────────────────────────────┐
                           │   Render Web Service          │
                           │   (FastAPI / Uvicorn)         │
-                          │   https://<backend>.onrender.com │
+                          │   https://crisisops-api.onrender.com │
                           └──────────────┬────────────────┘
                                          │
                                    SQLite Engine
                                          │
                                          ▼
                           ┌───────────────────────────────┐
-                          │  crisisops.db (Local File)    │
+                          │  backend/crisisops.db         │
                           │  Auto-seeded on fresh launch  │
                           └───────────────────────────────┘
 ```
 
 The application is deployed as two decoupled cloud services:
-1. **Backend Web Service**: Python FastAPI application running under Uvicorn with dynamic `$PORT` binding.
-2. **Frontend Static Site**: Pre-compiled React + Vite single page application with environment-driven API routing (`VITE_API_URL`).
+1. **Backend Web Service (`crisisops-api`)**: Python FastAPI application running under Uvicorn with dynamic `$PORT` binding.
+2. **Frontend Static Site (`crisisops`)**: Pre-compiled React + Vite single page application with environment-driven API routing (`VITE_API_URL`).
 
 ---
 
@@ -42,16 +42,16 @@ The application is deployed as two decoupled cloud services:
 Render Blueprints allow deploying the entire stack in one click using the repository's `render.yaml`.
 
 ### Step 1: Connect Repository to Render
-1. Push your latest code to GitHub: `git push origin main`.
+1. Push your latest code to GitHub: `git push origin hackathon-crisisops`.
 2. Log in to [Render Dashboard](https://dashboard.render.com).
 3. Click **New +** → **Blueprint**.
-4. Connect your GitHub repository (`CrisisOps`).
+4. Connect your GitHub repository (`CrisisOps`) and select branch `hackathon-crisisops`.
 
 ### Step 2: Approve & Deploy
 1. Render will automatically detect `render.yaml`.
 2. Review the detected services:
-   - `crisisops-backend` (Python Web Service)
-   - `crisisops-frontend` (Static Site)
+   - `crisisops-api` (Python Web Service)
+   - `crisisops` (Static Site)
 3. Click **Apply**.
 4. Render will build and deploy both services automatically.
 
@@ -61,12 +61,12 @@ Render Blueprints allow deploying the entire stack in one click using the reposi
 
 If deploying manually without Blueprint:
 
-### Service 1: Backend (Python Web Service)
+### Service 1: Backend (`crisisops-api`)
 
 | Configuration Field | Value |
 | :--- | :--- |
 | **Service Type** | Web Service |
-| **Name** | `crisisops-backend` |
+| **Name** | `crisisops-api` |
 | **Environment** | Python |
 | **Root Directory** | `backend` |
 | **Build Command** | `pip install -r requirements.txt` |
@@ -78,20 +78,20 @@ If deploying manually without Blueprint:
 | :--- | :--- | :--- |
 | `ENV` | `production` | Enables production runtime mode |
 | `DEBUG` | `False` | Disables debug logs & stack trace leak |
-| `DATABASE_URL` | `sqlite:///./crisisops.db` | Local SQLite database file path |
-| `CORS_ORIGINS` | `https://crisisops-frontend.onrender.com` | Allowed CORS origins (or `*`) |
+| `DATABASE_URL` | `sqlite:///./crisisops.db` | Local SQLite database file path (resolved canonically) |
+| `CORS_ORIGINS` | `["https://crisisops.onrender.com"]` | Authorized CORS origin for frontend |
 
 ---
 
-### Service 2: Frontend (Static Site)
+### Service 2: Frontend (`crisisops`)
 
 | Configuration Field | Value |
 | :--- | :--- |
 | **Service Type** | Static Site |
-| **Name** | `crisisops-frontend` |
+| **Name** | `crisisops` |
 | **Environment** | Static |
 | **Root Directory** | `frontend` |
-| **Build Command** | `npm install && npm run build` |
+| **Build Command** | `npm ci && npm run build` |
 | **Publish Directory** | `./dist` |
 
 #### Rewrite Rules (SPA Handling)
@@ -103,51 +103,23 @@ Add a rewrite rule under **Redirects/Rewrites**:
 #### Frontend Environment Variables
 | Variable Name | Value | Purpose |
 | :--- | :--- | :--- |
-| `VITE_API_URL` | `https://crisisops-backend.onrender.com` | Target URL of backend Web Service |
+| `VITE_API_URL` | `https://crisisops-api.onrender.com` | Target URL of backend Web Service |
 
 ---
 
 ## 🗄️ Database Seeding & Deterministic State
 
-* **Fresh Instance Startup**: When `crisisops-backend` starts for the first time, `app/main.py` detects an empty database and automatically executes `seed_database_if_empty()`.
-* **Seeded Assets**:
-  - Machines: `M-204` (Hydraulic Drive - Critical), `M-101`, `M-305`.
+- **Fresh Instance Startup**: When `crisisops-api` starts for the first time, `app/main.py` detects an empty database and automatically executes `seed_database_if_empty()`.
+- **Seeded Assets**:
+  - 10 Machines across Chakan MIDC Pune plant (`PMP-204`, `CNC-101`, `CNC-102`, `CMP-301`, `TUR-401`, etc.).
   - Active Incident: `INC-M204-001` (Bearing Temperature Spikes & High Vibration).
-  - SOP Documents: `SOP-M204-BEARING`, `SOP-COOLING-PUMP`, `SOP-POWER-GEN`.
-  - Maintenance History & Audit Trails.
-* **Idempotency**: Restarting or redeploying the backend will **not** wipe user actions unless the database file is explicitly deleted.
+  - 8 SOP Documents: `SOP-M204-BEARING`, `SOP-COOLING-PUMP`, `SOP-POWER-GEN`, etc.
+  - 490 Telemetry points, 8 Maintenance Records, and SHA-256 Audit Trail.
+- **Idempotency**: Restarting or redeploying the backend will **not** reseed or wipe user actions unless the database file is deleted.
 
 ---
 
-## 🧪 Post-Deployment Verification Checklist
+## ⚠️ Render Free Tier Constraints & Cold Starts
 
-Run these cURL requests against your deployed backend URL:
-
-### 1. Health Check
-```bash
-curl -s https://crisisops-backend.onrender.com/api/health
-```
-**Expected Response**:
-```json
-{"status":"ok","app":"Industrial CrisisOps","version":"0.1.0","environment":"production"}
-```
-
-### 2. Fleet Machine List
-```bash
-curl -s https://crisisops-backend.onrender.com/api/machines
-```
-**Expected Response**: JSON array containing 3 machines (`M-204`, `M-101`, `M-305`).
-
-### 3. Actuation Safety Invariant Verification
-```bash
-curl -X POST https://crisisops-backend.onrender.com/api/incidents/INC-M204-001/execute-actuation
-```
-**Expected Response**: HTTP 403 Forbidden (`Human approval required prior to physical actuation`).
-
----
-
-## ⚠️ Troubleshooting & Deployment Gotchas
-
-1. **Free Tier Cold Starts**: Render free-tier web services spin down after 15 minutes of inactivity. Initial requests may take 30-50 seconds to wake up the Uvicorn container.
-2. **CORS Blocked**: If API requests fail in browser console, ensure `CORS_ORIGINS` on backend matches your exact frontend URL without trailing slashes.
-3. **Frontend API URL**: In Vite, environment variables prefixed with `VITE_` are baked in at build time. If you update `VITE_API_URL`, trigger a fresh frontend build (**Clear build cache & deploy**).
+- **Spin Down on Idle**: On Render's Free tier, web services spin down after 15 minutes of inactivity. The first request after idle can take 30–50 seconds to boot.
+- **Ephemeral Storage**: On free web services, the local SQLite database persists while the instance is running, but restarts with a freshly seeded database on redeploy. This is ideal for hackathon evaluation as the demonstration data is always clean and deterministic.

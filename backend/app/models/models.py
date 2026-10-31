@@ -15,6 +15,18 @@ class Machine(Base):
     description = Column(Text, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+    # Extended industrial metadata (Chakan MIDC Automotive Specification)
+    equipment_category = Column(String, nullable=True)  # e.g. "Centrifugal Pump", "CNC Machining Centre"
+    manufacturer_model = Column(String, nullable=True)  # e.g. "Kirloskar KPD-80/20", "BFW Chakra BMV 60"
+    criticality = Column(String, default="HIGH")        # LOW, MEDIUM, HIGH, CRITICAL
+    health_score = Column(Float, default=95.0)          # 0-100 scale
+    last_maintenance_date = Column(DateTime, nullable=True)
+    next_maintenance_date = Column(DateTime, nullable=True)
+    vibration_threshold = Column(Float, default=4.5)    # mm/s RMS warning/critical threshold
+    temp_threshold = Column(Float, default=75.0)        # °C thermal alert limit
+    rated_output_units = Column(Float, default=100.0)   # Nameplate rating
+    output_unit_label = Column(String, default="units/hour") # Explicit units: m³/hr, bar, units/hr, RPM
+
     # Relationships
     telemetry_records = relationship("TelemetryRecord", back_populates="machine", cascade="all, delete-orphan")
     maintenance_records = relationship("MaintenanceRecord", back_populates="machine", cascade="all, delete-orphan")

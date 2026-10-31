@@ -149,6 +149,16 @@ class MachineBase(BaseSchema):
     status: str = "NORMAL"
     description: Optional[str] = None
     created_at: datetime
+    equipment_category: Optional[str] = None
+    manufacturer_model: Optional[str] = None
+    criticality: Optional[str] = "HIGH"
+    health_score: Optional[float] = 95.0
+    last_maintenance_date: Optional[datetime] = None
+    next_maintenance_date: Optional[datetime] = None
+    vibration_threshold: Optional[float] = 4.5
+    temp_threshold: Optional[float] = 75.0
+    rated_output_units: Optional[float] = 100.0
+    output_unit_label: Optional[str] = "units/hour"
 
 
 class MachineCreate(BaseModel):

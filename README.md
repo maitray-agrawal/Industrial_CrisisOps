@@ -1,222 +1,201 @@
-# CrisisOps
+# Industrial CrisisOps
 
-## Agentic Industrial Incident Investigation & Autonomous Recovery
+## Agentic Industrial Incident Investigation & Autonomous Recovery Platform
 
-CrisisOps is an agentic AI system that investigates industrial incidents, dynamically selects diagnostic tools, evaluates evidence, recommends policy-controlled recovery actions, adapts when interventions fail, and verifies the resulting system state.
-
-> **Positioning & Operational Scope**: Autonomous investigation and adaptive decision-making with policy-controlled simulated actuation. All physical/industrial actuation is simulated and policy-controlled.
-
-[![Python 3.14](https://img.shields.io/badge/Python-3.14-blue.svg)](https://www.python.org/)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.0-009688.svg)](https://fastapi.tiangolo.com/)
 [![React 18](https://img.shields.io/badge/React-18.3.1-61DAFB.svg)](https://reactjs.org/)
 [![TypeScript 5.5](https://img.shields.io/badge/TypeScript-5.5.3-blue.svg)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4.21-646CFF.svg)](https://vitejs.dev/)
 [![SQLite](https://img.shields.io/badge/SQLite-Edge-003B57.svg)](https://www.sqlite.org/)
-[![Pytest 8.3](https://img.shields.io/badge/Pytest-38%2F38%20Passed-brightgreen.svg)](https://docs.pytest.org/)
+[![Pytest 41/41 Passed](https://img.shields.io/badge/Pytest-41%2F41%20Passed-brightgreen.svg)](backend/tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
----
+CrisisOps is an India-focused, agentic AI platform engineered for industrial incident investigation, root-cause correlation, and policy-controlled autonomous recovery. Designed specifically for plant operators, maintenance engineers, and shift supervisors, CrisisOps transforms raw industrial telemetry anomalies into explainable diagnostics, quantitative financial exposure estimates (in INR ₹), and standard operating procedure (SOP) recovery plans — enforced with strict, non-bypassable human-in-the-loop safety gates and tamper-evident SHA-256 cryptographic audit chaining.
 
-### The Agentic Loop
-
-CrisisOps executes an autonomous closed-loop agent runtime:
-
-```
-Goal
- ↓
-Observe State
- ↓
-Evaluate Evidence
- ↓
-Select Next Tool
- ↓
-Execute Tool
- ↓
-Record Result
- ↓
-Evaluate Outcome
- ↓
-Goal Achieved?
- ├── YES → Verify → Resolve
- └── NO  → Replan / Adapt Strategy → Select Next Tool
-```
-
-### Key Capabilities
-
-* **Dynamic Tool Selection**: The central agent runtime queries a centralized tool registry based on evolving evidence, skipping redundant checks.
-* **Stateful Agent Execution**: Maintains an explicit runtime state tracking goals, hypotheses, completed actions, and failure events.
-* **Evidence-Grounded Investigation**: Correlates high-frequency telemetry Z-score anomalies with historical maintenance work orders.
-* **Operational Knowledge Retrieval**: Evaluates Standard Operating Procedures (SOPs) indexed for target mechanical assemblies.
-* **Failure Recovery & Strategy Adaptation**: Detects execution failure conditions (e.g. locked bypass valve preconditions) and replans with alternative containment procedures.
-* **Risk-Aware Policy Control**: Low-risk diagnostic tools run autonomously; high-risk recovery interventions are gated behind operator approval policies.
-* **Human Authorization (HITL)**: Non-bypassable human approval gate enforced with HTTP 403 server-side validation.
-* **Outcome Verification**: Multi-point quantitative goal verification (machine state, vibration threshold, bearing temperature, production capacity).
-* **Cryptographic Decision Ledger**: Tamper-evident SHA-256 hash chaining records every observation, tool execution, decision, and approval.
-* **Agent Execution Replay**: Time-travel incident replay reproducing state transitions and agent decisions step-by-step.
+> **Operational Scope & Engineering Positioning**: CrisisOps operates in a simulated industrial environment designed to reflect modern automotive plant operations. Actuation controls interface with simulated PLC registers and equipment states. All high-risk state changes require explicit human approval.
 
 ---
 
-## ⚡ The Industrial Challenge
+## 1. Problem Statement
 
-Modern manufacturing and chemical processing facilities generate thousands of sensor data points per second across turbines, pumps, and compressors. When critical anomalies occur (e.g., thermal spikes or bearing vibration shifts), operators encounter severe operational bottlenecks:
+In 24/7 continuous industrial manufacturing facilities — such as high-precision automotive component machining lines — equipment anomalies present critical operational bottlenecks:
 
-1. **Cognitive Overload**: Raw telemetry floods alarm boards without automated anomaly classification or severity scoring.
-2. **Delayed Root Cause Identification**: Correlating sensor anomalies with physical equipment maintenance histories (`MaintenanceRecord`) requires manual log searches across siloed systems.
-3. **Unquantified Financial Risk**: Operational teams lack real-time visibility into hourly downtime costs and production capacity loss during active incidents.
-4. **Manual SOP Retrieval**: Standard Operating Procedures (SOPs) are stored in static PDFs, slowing immediate containment response.
-5. **Actuation Hazards**: Fully autonomous AI actuation poses severe catastrophic risks if allowed to execute unverified machine state modifications.
-6. **Unverifiable Audit Trails**: Incident logs are vulnerable to post-hoc manipulation or lack verifiable proof of human authorization during compliance audits.
+1. **Alarm Fatigue & Cognitive Overload**: SCADA and IoT sensor arrays broadcast thousands of data points per minute. During an anomaly, operators are inundated with raw threshold alarms without context, statistical significance, or severity hierarchy.
+2. **Siloed Diagnostics & Slow Root Cause Discovery**: Telemetry breaches are isolated from maintenance records, equipment overhaul histories, and operating limits. Determining why a pump bearing or CNC spindle is overheating requires manual cross-system log searching.
+3. **Unquantified Financial Exposure**: Plant leadership and shift supervisors lack real-time visibility into the rupee cost of active downtime, capacity reduction, scrap generation, and labor overtime during an unfolding incident.
+4. **Static, Paper-Based SOPs**: Standard Operating Procedures remain trapped in physical binders or static PDFs, causing delays in executing time-critical containment procedures.
+5. **Catastrophic Actuation Risk**: Black-box autonomous AI actuation presents unacceptable safety hazards if permitted to execute unvalidated speed or throttle adjustments on live machinery.
+6. **Unverifiable Compliance Records**: Post-incident auditing frequently suffers from incomplete or retroactively altered log files lacking mathematical proof of human authorization.
 
 ---
 
-## 🛡️ Key System Architecture & Multi-Agent Intelligence
+## 2. Proposed Solution
 
-Industrial CrisisOps solves these challenges through a deterministic, explainable 4-stage agent pipeline combined with a non-bypassable human approval safety gate and cryptographic SHA-256 ledger chaining.
+Industrial CrisisOps addresses these challenges with a deterministic, multi-agent operational platform:
+
+- **Automated Anomaly Detection**: Evaluates incoming telemetry streams against rolling statistical baselines using standard deviation Z-scores ($|Z| \ge 3.0$).
+- **Explainable Multi-Agent Pipeline**: Coordinates four specialized agents (Signal Correlation, Root Cause Analysis, Financial Impact Assessment, and SOP Retrieval) to synthesize raw signals into actionable intelligence.
+- **India-Focused Plant Financial Modeling**: Computes downtime losses, capacity reductions, and repair costs denominated in Indian Rupees (₹ INR) for domestic manufacturing contexts.
+- **Zero-Trust Human Approval Invariant**: Enforces a strict server-side policy (`HTTP 403 Forbidden`) prohibiting containment actuation without cryptographic recording of human authorization.
+- **Cryptographic SHA-256 Audit Ledger**: Chains every telemetry breach, agent deduction, human authorization, and simulated actuation in a tamper-evident hash chain verifiable directly in the browser via the Web Crypto API.
+- **Dedicated 10-Module Operations Suite**: Provides distinct, role-tailored workspaces for Mission Control, Live SCADA Monitoring, Incident Investigation, Fleet Registry, Predictive Maintenance, SOP Library, Plant Analytics, Audit History, and System Configuration.
+
+---
+
+## 3. Key Features
+
+- **Real-Time Fleet Telemetry (Simulated)**: Monitored view of 10 automotive line assets across Chakan MIDC, Pune with temperature, vibration, RPM, and pressure readings.
+- **Statistical Anomaly Classification**: Highlights anomalies using rolling Z-scores ($Z = +3.83$ critical breach on bearing vibration).
+- **Automated Work Order Correlation**: Cross-references telemetry spikes with overdue maintenance logs (e.g., MNT-882 bearing replacement overdue by 60 days).
+- **Deterministic SOP Retrieval**: Keyword and TF-IDF matching indexes standard operating procedures (e.g., SOP-M204-BEARING) to generate step-by-step mitigation plans.
+- **Quantitative INR Financial Risk Engine**: Line-item financial impact breakdown modeling production loss per hour, scrap value, and emergency maintenance costs.
+- **Server-Side Safety Invariant**: Zero-trust architecture rejecting unauthorized actuation with `HTTP 403 Forbidden`.
+- **Browser-Native Web Crypto Hash Inspector**: Recalculates SHA-256 hash chains client-side to verify ledger integrity with zero server dependency.
+- **7-Act Presentation & Hotkey Controller**: Guided 3-minute hackathon evaluation mode with keyboard hotkeys (`1` through `7`) and interactive walkthroughs.
+
+---
+
+## 4. System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Sensing & Detection
-        TS[SCADA Telemetry Stream] --> AD[Anomaly Detector]
-        AD -->|Z-Score > 3.0| SIG[Signal Correlator Agent]
+    subgraph Data Layer & SCADA Emulation
+        SCADA[Simulated SCADA Stream] --> AD[Statistical Anomaly Detector]
+        DB[(Canonical SQLite DB)] <--> REPO[Data Repository Layer]
     end
 
     subgraph 4-Stage Agent Pipeline
-        SIG -->|Anomaly Alert| RCA[Root Cause Analysis Agent]
-        RCA -->|Correlate MNT-882| IMP[Impact Assessment Agent]
-        IMP -->|Downtime Risk & Loss| SOP[SOP Response Agent]
-        SOP -->|Retrieve SOP-M204| REC[Action Recommendation]
+        AD -->|Z-Score > 3.0| SIG[1. Signal Correlator Agent]
+        SIG -->|Correlate Telemetry| RCA[2. Root Cause Analysis Agent]
+        REPO -->|Maintenance History| RCA
+        RCA -->|Root Cause Finding| IMP[3. Financial Impact Agent]
+        IMP -->|Downtime & Loss in INR| SOP[4. SOP Retrieval Agent]
+        REPO -->|SOP Documents| SOP
+        SOP --> REC[Formulated Action Recommendation]
     end
 
-    subgraph Human-in-the-Loop Gate
-        REC --> UI[Mission Control UI]
-        UI -->|Operator Auth| APPROVE{Human Approved?}
-        APPROVE -- NO --> REJECT[Action Blocked / Logged]
-        APPROVE -- YES --> ACT[Actuation Engine]
+    subgraph Zero-Trust Safety Gate
+        REC --> UI[Mission Control / Incidents UI]
+        UI -->|Operator Review| GATE{Human Operator Approval?}
+        GATE -- REJECT / NONE --> BLOCK[HTTP 403 Forbidden - Actuation Blocked]
+        GATE -- AUTHORIZED --> AUTH[Signed Approval Payload]
     end
 
-    subgraph Execution & Verification
-        ACT -->|Execute Containment| PLC[Simulated Hardware PLC]
-        ACT -->|Log Action| AUDIT[Audit Log Service]
-        AUDIT -->|Compute SHA-256| CHAIN[(Cryptographic Hash Ledger)]
-        CHAIN --> HASH[Web Crypto Inspector]
+    subgraph Actuation & Verification
+        AUTH --> ACT[Actuation Engine]
+        ACT -->|Simulated Control Signal| PLC[Simulated Plant Machinery State]
+        ACT -->|Record Transaction| AUDIT[Audit Logging Service]
+        AUDIT -->|Compute Hash Chain| CHAIN[(SHA-256 Audit Ledger)]
+        CHAIN --> HASH_UI[Web Crypto API Browser Inspector]
     end
 ```
 
 ---
 
-## 🔄 10-Step Incident Lifecycle
+## 5. Technology Stack
 
-Industrial CrisisOps governs every industrial emergency through a deterministic 10-step lifecycle:
+### Backend
+- **Language**: Python 3.10+ (tested on Python 3.14)
+- **Web Framework**: FastAPI 0.115.0 (ASGI high-concurrency framework)
+- **Server**: Uvicorn 0.34.0 (lightning-fast ASGI web server)
+- **Data Layer**: SQLAlchemy 2.0.38 + SQLite 3 (deterministic edge storage)
+- **Validation**: Pydantic v2 (strict request/response typing)
+- **Testing**: Pytest 8.3.4 (41 unit, integration, and security tests)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Sensor as SCADA Telemetry
-    participant Detector as Anomaly Detector
-    participant Pipeline as 4-Stage Agent Pipeline
-    participant Database as Edge SQLite DB
-    participant Human as Human Operator
-    participant Actuator as Actuation Engine
-    participant Ledger as SHA-256 Audit Service
-
-    Sensor->>Detector: Continuous Telemetry (Temp, Vibration, RPM)
-    Detector->>Detector: Compute Rolling Mean, StdDev, Z-Scores
-    Detector->>Pipeline: Flag Anomaly (Z = +3.83, Temp = 88.5°C)
-    Pipeline->>Database: Query Maintenance Records (MNT-882 Bearing Rating)
-    Pipeline->>Pipeline: Quantify Financial Impact ($1,875/hr × 24h = $45,000)
-    Pipeline->>Database: TF-IDF Search SOP Documents (SOP-M204-BEARING)
-    Pipeline->>Human: Present Formulated Containment Recommendation
-    Human->>Actuator: Explicit Operator Authorization (Human Approval = TRUE)
-    Actuator->>Actuator: Validate Safety Invariants (HTTP 403 Enforced if missing)
-    Actuator->>Ledger: Commit Action to Immutable SHA-256 Hash Chain
-```
+### Frontend
+- **Framework**: React 18.3.1
+- **Language**: TypeScript 5.5.3 (strict typing enabled)
+- **Build Tool**: Vite 5.4.21 (ESM fast bundle compilation)
+- **Styling**: Tailwind CSS 3.4.17 + Industrial Dark High-Contrast Theme
+- **Icons**: Lucide React 0.469.0
+- **Charts**: Recharts 2.15.0
+- **Security / Cryptography**: W3C Web Crypto API (`window.crypto.subtle`)
 
 ---
 
-## 🧮 Statistical Anomaly Detection & Financial Equations
+## 6. Agentic AI Workflow
 
-### 1. Rolling Z-Score Anomaly Formulation
-The anomaly detection engine (`backend/app/services/detector.py`) evaluates incoming stream values against a rolling baseline ($\mu, \sigma$):
+The CrisisOps agent runtime executes a closed-loop investigation and recovery cycle:
 
-$$Z = \frac{X_t - \mu}{\sigma}$$
+```
+                      [ Goal Formulation ]
+                                ↓
+                      [ Telemetry Stream ]
+                                ↓
+                     [ Anomaly Detection ]
+                      (Z-Score Threshold)
+                                ↓
+                   [ Evidence Accumulation ]
+               (Telemetry + Maintenance Logs)
+                                ↓
+                   [ Multi-Agent Synthesis ]
+       ┌─────────────────┬──────────────────┬─────────────────┐
+       ↓                 ↓                  ↓                 ↓
+ [Signal Correlator] [Root Cause]    [Impact in INR]    [SOP Match]
+       └─────────────────┴──────────────────┴─────────────────┘
+                                ↓
+                 [ Human Authorization Gate ]
+                                ↓
+                 [ Policy-Controlled Actuation ]
+                                ↓
+                   [ Quantitative Outcome ]
+                    (Vibration / Temp Drop)
+                                ↓
+                 [ SHA-256 Audit Commitment ]
+```
 
-Where:
-* $X_t$ = Current sensor reading (e.g., Vibration = $7.82\text{ mm/s}$)
-* $\mu$ = Baseline baseline mean ($1.8\text{ mm/s}$)
-* $\sigma$ = Standard deviation ($1.567\text{ mm/s}$)
-* **Threshold**: Anomaly flagged when $|Z| \ge 3.0$ (Critical status at $Z = +3.83$).
-
-### 2. Financial Impact Calculation
-The Impact Assessment Agent (`backend/app/agents/impact_agent.py`) computes total financial exposure using deterministic cost equations:
-
-$$\text{Financial Risk (\$)} = \text{Downtime Rate (\$/hr)} \times \text{Estimated Repair Duration (hr)}$$
-
-For Bearing Failure Incident (`INC-2026-001`):
-$$\text{Financial Risk} = \$1,875/\text{hr} \times 24.0\text{h} = \$45,000$$
-$$\text{Capacity Reduction} = 35\%$$
+1. **Observe**: Ingests rolling multi-variate telemetry (temperature, vibration, RPM, pressure).
+2. **Evaluate Evidence**: Evaluates departures from nominal operating envelopes.
+3. **Correlate**: Links anomalous physical signatures with equipment overhaul schedules and historical failure patterns.
+4. **Quantify**: Calculates economic consequences of unmitigated failure in Indian Rupees.
+5. **Recommend**: Matches equipment tags and failure modes against standard operating procedures.
+6. **Gate**: Halts autonomous execution; demands human operator authorization.
+7. **Actuate & Verify**: Modifies simulated machinery operating parameters, verifies metric recovery, and seals the event to an immutable cryptographic audit ledger.
 
 ---
 
-## 🔐 Cryptographic Ledger & Web Crypto Verification
+## 7. Industrial Use Case: Pune Automotive Manufacturing Plant
 
-Every machine state transition, anomaly detection, agent finding, operator approval, and containment execution is appended to an immutable SQLite ledger with cryptographic SHA-256 hash chaining (`backend/app/services/audit_service.py`).
-
-### Hash Chaining Formula
-For any audit log entry $n$:
-
-$$H_n = \text{SHA256}\left( \text{log\_id}_n \parallel \text{timestamp}_n \parallel \text{actor\_type}_n \parallel \text{actor\_id}_n \parallel \text{action\_type}_n \parallel \text{details\_json}_n \parallel H_{n-1} \right)$$
-
-Where $H_0 = \text{"0" \times 64}$ (Genesis Hash).
-
-```
-+---------------------+     +---------------------+     +---------------------+
-| Audit Record #101   |     | Audit Record #102   |     | Audit Record #103   |
-| Action: INCIDENT_...|     | Action: HUMAN_APP...|     | Action: ACTUATION...|
-| Prev Hash: 00000... | --> | Prev Hash: a3f89... | --> | Prev Hash: 7b92c... |
-| Hash: a3f89...      |     | Hash: 7b92c...      |     | Hash: e4b87...      |
-+---------------------+     +---------------------+     +---------------------+
-```
-
-### Browser-Native Web Crypto Verification
-The frontend (`frontend/src/components/HashVerifierModal.tsx`) uses the Web Crypto API (`window.crypto.subtle.digest('SHA-256', ...)`):
-
-```typescript
-const canonicalString = `${log.id}|${log.timestamp}|${log.actor_type}|${log.actor_id}|${log.action_type}|${JSON.stringify(log.details)}|${log.previous_hash}`;
-const encoder = new TextEncoder();
-const data = encoder.encode(canonicalString);
-const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-const hashArray = Array.from(new Uint8Array(hashBuffer));
-const computedHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-const isValid = computedHash === log.current_hash;
-```
+- **Facility**: High-Precision Automotive Powertrain & Transmission Plant
+- **Location**: Chakan MIDC Industrial Area, Pune, Maharashtra, India
+- **Operating Regime**: 24/7 continuous 3-shift production schedule
+- **Target Assets**: 10 critical machines across machining, welding, casting, and finishing bays.
+- **Primary Incident (`INC-M204-001`)**:
+  - **Asset**: PMP-204 Centrifugal Coolant Pump (`M-204`)
+  - **Location**: Line B - Cooling Water Circulation Bay
+  - **Function**: Supplies cooling water to high-speed CNC spindle heads.
+  - **Failure Event**: Drive-end bearing thermal breakdown accompanied by harmonic vibration breach ($7.82\text{ mm/s}$ vs $4.50\text{ mm/s}$ safety threshold).
+  - **Root Cause**: Overdue maintenance record `MNT-882` (bearing replacement exceeded by 60 days).
+  - **Mitigation Procedure**: `SOP-M204-BEARING` (throttle pump to 25% capacity, spin up standby pump PMP-102, dispatch emergency mechanical team).
 
 ---
 
-## 🖥️ Screen Documentation & UI Artifacts
+## 8. Sample Machine & Incident Dataset
 
-### 1. AI Incident Investigation Workspace
-![Incidents Workspace](docs/screenshots/02-incidents-workspace.png)
-*Figure 2: Comprehensive incident investigation panel displaying Z-score telemetry, root cause diagnosis, financial impact breakdown, and SOP recommendations.*
+CrisisOps ships with 10 pre-configured, domain-accurate automotive manufacturing assets:
 
-### 2. Cryptographic SHA-256 Hash Verifier Modal
-![SHA-256 Inspector](docs/screenshots/03-sha256-inspector.png)
-*Figure 3: Web Crypto API verification inspector proving tamper-evident ledger integrity and continuity across all recorded events.*
-
-### 3. Machine Fleet Monitoring Dashboard
-![Fleet Monitoring](docs/screenshots/04-fleet-monitoring.png)
-*Figure 4: Real-time telemetry monitoring for industrial plant assets including Turbines, Pumps, and Compressors.*
+| Machine ID | Equipment Name | Category | Criticality | Nominal Baseline | Alert Threshold | Operational Role |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **M-204** | PMP-204 Centrifugal Coolant Pump | Centrifugal Pump | CRITICAL | $1.80\text{ mm/s}, 65.0^\circ\text{C}$ | $4.50\text{ mm/s}, 75.0^\circ\text{C}$ | Spindle cooling water circulation |
+| **M-101** | CNC-101 5-Axis Milling Centre | CNC Machining | HIGH | $0.80\text{ mm/s}, 52.0^\circ\text{C}$ | $2.50\text{ mm/s}, 68.0^\circ\text{C}$ | Engine cylinder block finishing |
+| **M-102** | CNC-102 High-Speed Turning Lathe | CNC Turning | HIGH | $0.95\text{ mm/s}, 48.0^\circ\text{C}$ | $2.80\text{ mm/s}, 65.0^\circ\text{C}$ | Transmission gear shaft turning |
+| **M-103** | CNC-103 Horizontal Machining | CNC Machining | MEDIUM | $1.10\text{ mm/s}, 55.0^\circ\text{C}$ | $3.00\text{ mm/s}, 70.0^\circ\text{C}$ | Transmission housing milling |
+| **M-201** | PMP-101 Primary Hydraulic Pump | Hydraulic Pump | CRITICAL | $1.50\text{ mm/s}, 58.0^\circ\text{C}$ | $4.00\text{ mm/s}, 72.0^\circ\text{C}$ | 200-bar stamping press hydraulics |
+| **M-301** | CMP-301 Rotary Screw Air Compressor | Air Compressor | HIGH | $1.60\text{ mm/s}, 68.0^\circ\text{C}$ | $4.20\text{ mm/s}, 82.0^\circ\text{C}$ | Shop-floor pneumatic tools supply |
+| **M-302** | CMP-302 Reciprocating Gas Compressor | Gas Compressor | HIGH | $2.10\text{ mm/s}, 72.0^\circ\text{C}$ | $4.80\text{ mm/s}, 85.0^\circ\text{C}$ | Nitrogen blanket purge system |
+| **M-401** | TUR-401 Auxiliary Steam Turbine | Co-Gen Turbine | CRITICAL | $1.20\text{ mm/s}, 78.0^\circ\text{C}$ | $3.50\text{ mm/s}, 92.0^\circ\text{C}$ | In-plant waste heat co-generation |
+| **M-501** | ROB-501 Robotic Spot Welding Cell | Industrial Robot | HIGH | $0.50\text{ mm/s}, 42.0^\circ\text{C}$ | $2.00\text{ mm/s}, 58.0^\circ\text{C}$ | BIW chassis unibody spot welding |
+| **M-601** | CON-601 Heavy Roller Conveyor | Material Handling | MEDIUM | $1.40\text{ mm/s}, 45.0^\circ\text{C}$ | $3.80\text{ mm/s}, 62.0^\circ\text{C}$ | Machining-to-assembly pallet line |
 
 ---
 
-## 🔒 Server-Side Safety Invariant & Zero-Trust Actuation
+## 9. Human Approval & Zero-Trust Safety Architecture
 
-Industrial CrisisOps enforces a hard server-side invariant in `backend/app/services/actuation_engine.py`. Autonomous machine state modifications without explicit human authorization are physically impossible at the API layer.
-
-### Core Actuation Safety Invariant (`actuation_engine.py`)
+CrisisOps enforces an unbypassable server-side security constraint inside [`backend/app/services/actuation_engine.py`](file:///d:/Vajra/backend/app/services/actuation_engine.py).
 
 ```python
-# Query existing action recommendations for the incident
+# Actuation Security Invariant: backend/app/services/actuation_engine.py
 recommendations = self.db.query(ActionRecommendation).filter(
     ActionRecommendation.incident_id == incident_id
 ).all()
@@ -229,246 +208,281 @@ if not recommendations or not any(r.human_approved for r in recommendations):
     )
 ```
 
-If an unauthorized client or rogue script invokes `POST /api/incidents/{id}/actuate`, the backend returns HTTP 403 Forbidden and logs the security violation to the audit ledger.
+- Any attempt to invoke `POST /api/incidents/{incident_id}/actuate` without an approved recommendation returns **`403 Forbidden`**.
+- Approvals record the operator's badge ID, role, and timestamp, permanently logged to the immutable audit ledger.
 
 ---
 
-## ⌨️ 3-Minute Hackathon Demo Guide & Keyboard Controls
+## 10. Cryptographic SHA-256 Audit Verification
 
-The application features a built-in 7-Act presentation mode with keyboard shortcuts for rapid, deterministic hackathon demonstrations. Press `?` or click **Demo Guide** in the top bar to activate.
+Every state mutation, agent finding, human authorization, and actuation command is committed to an append-only cryptographic hash chain.
 
-| Hotkey | Act / Scene | Operational Narrative | Technical Verification |
-| :---: | :--- | :--- | :--- |
-| **`1`** | **Act 1: Normal Operations** | Compressor C-101 operating at nominal parameters ($1.8\text{ mm/s}$ vibration, $65.0^\circ\text{C}$ temperature). | System in `HEALTHY` state. Baseline statistics recording. |
-| **`2`** | **Act 2: Crisis Trigger** | Bearing thermal degradation triggers sudden vibration jump to $7.82\text{ mm/s}$ ($88.5^\circ\text{C}$). | Anomaly Detector flags breach. Severity transitions to `CRITICAL`. |
-| **`3`** | **Act 3: Anomaly Signal** | Signal Correlator Agent calculates $Z = +3.83$ deviation over rolling baseline. | Explainable statistical anomaly reasoning rendered in UI. |
-| **`4`** | **Act 4: AI 4-Stage Pipeline** | Agents correlate `MNT-882` maintenance record, calculate $\$45,000$ financial risk, and retrieve `SOP-M204`. | Multi-agent execution visualizer completes stage breakdown. |
-| **`5`** | **Act 5: Human Approval Gate** | System formulates containment action but holds execution pending operator authorization. | Actuation engine enforces HTTP 403 lock until operator clicks Approve. |
-| **`6`** | **Act 6: Containment Execution** | Operator authorizes action; Actuation Engine executes flow reduction to 50% capacity. | Machine status changes to `CONTAINED`. Hazard mitigated. |
-| **`7`** | **Act 7: Cryptographic Proof** | Inspector opens SHA-256 Web Crypto verification modal to prove ledger integrity. | Recomputed hash chain matches DB records (100% green verification). |
+### Hash Chaining Formula
+For any audit entry $n$:
 
----
+$$H_n = \text{SHA256}\left( \text{log\_id}_n \parallel \text{timestamp}_n \parallel \text{actor\_type}_n \parallel \text{actor\_id}_n \parallel \text{action\_type}_n \parallel \text{details\_json}_n \parallel H_{n-1} \right)$$
 
-## 📊 Technical Architecture & Component Matrix
+Where $H_0 = \text{"0" \times 64}$ (Genesis Hash).
 
-| Layer | Component | Implementation File | Key Responsibility |
-| :--- | :--- | :--- | :--- |
-| **Frontend** | Mission Control UI | `frontend/src/pages/DashboardPage.tsx` | Main real-time SCADA monitoring interface. |
-| **Frontend** | Incident Workspace | `frontend/src/pages/IncidentsPage.tsx` | Interactive 4-agent investigation and approval panel. |
-| **Frontend** | Cryptographic Inspector | `frontend/src/components/HashVerifierModal.tsx` | Web Crypto API SHA-256 payload inspector. |
-| **Frontend** | Demo Controller | `frontend/src/components/DemoGuideModal.tsx` | 7-Act presentation mode & hotkey handler. |
-| **Backend API**| FastAPI Router | `backend/app/main.py` | REST API routes, CORS setup, exception handlers. |
-| **Backend API**| Incident Endpoints | `backend/app/api/incidents.py` | Telemetry streaming, containment, and state management. |
-| **Backend API**| Investigation Router | `backend/app/api/investigation.py` | Agent orchestrator execution & human approval routes. |
-| **Agent AI** | Agent Orchestrator | `backend/app/agents/agent_orchestrator.py` | Coordinates 4-stage sequential agent pipeline. |
-| **Agent AI** | Signal Agent | `backend/app/agents/signal_agent.py` | Rolling baseline Z-score anomaly classifier. |
-| **Agent AI** | RCA Agent | `backend/app/agents/rca_agent.py` | Equipment lifespan vs maintenance log correlator. |
-| **Agent AI** | Impact Agent | `backend/app/agents/impact_agent.py` | Financial downtime risk & capacity loss engine. |
-| **Agent AI** | SOP Agent | `backend/app/agents/sop_agent.py` | In-memory TF-IDF keyword SOP RAG engine. |
-| **Engine** | Anomaly Detector | `backend/app/services/detector.py` | Statistical thresholding & baseline calculation. |
-| **Engine** | Actuation Engine | `backend/app/services/actuation_engine.py` | Zero-trust containment actuation & safety invariants. |
-| **Engine** | Audit Ledger | `backend/app/services/audit_service.py` | SHA-256 hash chaining & integrity validation. |
-| **Engine** | Incident Replay | `backend/app/services/replay_service.py` | Step-by-step historical event replay builder. |
+```
++--------------------------+      +--------------------------+      +--------------------------+
+| Audit Entry #1           |      | Audit Entry #2           |      | Audit Entry #3           |
+| Action: INCIDENT_CREATED |      | Action: HUMAN_APPROVAL   |      | Action: ACTUATION_EXEC   |
+| Prev: 0000000000000000.. | ---> | Prev: e3b0c44298fc1c14.. | ---> | Prev: 9f83c24158a12e34.. |
+| Hash: e3b0c44298fc1c14.. |      | Hash: 9f83c24158a12e34.. |      | Hash: 4a21d589e47b89f0.. |
++--------------------------+      +--------------------------+      +--------------------------+
+```
+
+### Browser-Native Web Crypto Verification
+The **Audit History & SHA-256 Inspector** (`frontend/src/pages/AuditHistoryPage.tsx` and `frontend/src/components/HashVerifierModal.tsx`) utilizes the native browser W3C Web Crypto API (`window.crypto.subtle.digest('SHA-256', ...)`). Users can recalculate every hash client-side to verify that no log entry has been altered, injected, or deleted.
 
 ---
 
-## 🔬 Engineering Proof & Claim Verification Matrix
+## 11. India-Specific Financial Calculation Model
 
-| Claim | Verified Implementation | Source Code Reference | Automated Test / Verification |
-| :--- | :--- | :--- | :--- |
-| **Agent Runtime Loop** | Goal-driven stateful execution with evaluation & replanning | `backend/app/services/agent_runtime.py` | Verified via `test_agent_runtime.py` (7 tests) |
-| **Dynamic Tool Selection** | Stateful tool registry queries based on evidence & state | `backend/app/services/tool_registry.py` | Verified via `test_agent_runtime.py` |
-| **Failure & Adaptive Replanning**| Precondition failure handling & alternative strategy recovery | `backend/app/services/agent_runtime.py` | Test `test_agent_runtime_replan_after_failure` |
-| **Goal Verification** | Multi-point metric PASS/FAIL validation | `backend/app/services/agent_runtime.py` | Test `test_agent_runtime_success_criteria_evaluated` |
-| **Deterministic Telemetry** | 100% reproducible anomaly streams | `backend/app/api/incidents.py#L40-L75` | Verified via `test_agent_pipeline.py` |
-| **Statistical Z-Score** | $Z = (X - \mu)/\sigma \ge 3.0$ | `backend/app/services/detector.py#L45-L89` | Unit test `test_detector_zscore` passed |
-| **Financial Impact Model** | $\$1,875/\text{hr} \times 24.0\text{h} = \$45,000$ | `backend/app/agents/impact_agent.py#L35-L65` | Formula assertion verified in Pytest |
-| **In-Memory SOP RAG** | TF-IDF term overlap score optimization | `backend/app/agents/sop_agent.py#L40-L95` | Verified against `SOP-M204-BEARING` |
-| **Human Approval Invariant** | HTTP 403 Forbidden on unapproved actuation | `backend/app/services/actuation_engine.py#L84-L89` | Safety invariant test passed |
-| **SHA-256 Hash Chaining** | Append-only $H_n = \text{SHA256}(P_n \parallel H_{n-1})$ | `backend/app/services/audit_service.py#L50-L115` | Integrity verification test passed |
-| **Web Crypto Verification** | Real-time browser hash recalculation | `frontend/src/components/HashVerifierModal.tsx#L45-L90` | Verified 0 hash mismatch errors |
-| **Incident Replay** | Chronological telemetry/audit reconstruction | `backend/app/services/replay_service.py#L25-L80` | Replay timeline endpoint tested |
-| **Production Frontend Build** | 0 TypeScript/Vite bundle compilation errors | `frontend/src/index.css` & `frontend/vite.config.ts` | `npm run build` completed in 0.68s |
+CrisisOps models industrial financial exposure using realistic Indian manufacturing metrics:
+
+### Cost Components
+1. **Downtime & Capacity Loss**:
+   $$\text{Production Volume Lost} = \text{Hourly Rated Output} \times \text{Capacity Reduction \%} \times \text{Downtime Hours}$$
+   $$\text{Production Value Affected (₹)} = \text{Production Volume Lost} \times \text{Value per Unit (₹)}$$
+
+2. **Emergency Maintenance & Restoration**:
+   $$\text{Maintenance Cost (₹)} = \text{Replacement Parts Cost (₹)} + (\text{Labor Hours} \times \text{Technician Hourly Rate (₹)})$$
+
+3. **Total Exposure**:
+   $$\text{Total Exposure (₹)} = \text{Production Value Affected} + \text{Maintenance Cost}$$
+
+### Concrete Case: PMP-204 Bearing Failure (`INC-M204-001`)
+- **Hourly Rated Output**: $120.0\text{ m}^3\text{/hr}$
+- **Operating Capacity Loss**: $35\%$
+- **Estimated Repair Window**: $12.0\text{ hours}$
+- **Production Lost**: $120.0 \times 0.35 \times 12.0 = 504.0\text{ m}^3$
+- **Illustrative Finished Component Value**: ₹607.14 per $\text{m}^3$ coolant equivalent
+- **Production Value Affected**: **₹3,06,000 (₹3.06 Lakh)**
+- **Emergency Bearing Kit (Kirloskar OEM)**: ₹25,000
+- **Mechanical Specialist Labor ($10\text{ hrs} \times ₹2,000/\text{hr}$)**: ₹20,000
+- **Total Emergency Maintenance Cost**: **₹45,000**
+- **Combined Financial Exposure**: **₹3,51,000 (₹3.51 Lakh)**
 
 ---
 
-## 🧪 Testing & Build Verification
+## 12. Application Screenshots
 
-### Backend Automated Test Suite
-The backend is verified using `pytest` with 38 comprehensive unit, runtime, and integration tests:
+### 1. Operations Overview Dashboard
+![Mission Control Dashboard](docs/screenshots/01-dashboard.png)
+*Figure 1: High-level plant overview showing active incidents, asset health scores, and critical machine alerts.*
+
+### 2. AI Incident Investigation Workspace
+![Incident Workspace](docs/screenshots/02-incidents-workspace.png)
+*Figure 2: 4-stage agent investigation panel detailing Z-score telemetry anomalies, root cause maintenance correlation, INR financial exposure, and SOP action plans.*
+
+### 3. Cryptographic SHA-256 Hash Verifier
+![SHA-256 Inspector](docs/screenshots/03-sha256-inspector.png)
+*Figure 3: Web Crypto API client-side verification proving ledger continuity and mathematical immutability.*
+
+### 4. Fleet Telemetry & Asset Monitoring
+![Fleet Monitoring](docs/screenshots/04-fleet-monitoring.png)
+*Figure 4: Real-time telemetry monitoring displaying temperature, vibration, and RPM envelopes across all 10 plant assets.*
+
+---
+
+## 13. Live Demo & Deployment Information
+
+CrisisOps is configured for zero-configuration cloud deployment on Render:
+
+| Service | Component | Production URL |
+| :--- | :--- | :--- |
+| **Frontend UI** | React + Vite Static Web Service | [https://crisisops.onrender.com](https://crisisops.onrender.com) |
+| **Backend API** | FastAPI + Uvicorn Web Service | [https://crisisops-api.onrender.com](https://crisisops-api.onrender.com) |
+| **API Interactive Docs** | Swagger / OpenAPI UI | [https://crisisops-api.onrender.com/docs](https://crisisops-api.onrender.com/docs) |
+| **Health Check** | API System Status Endpoint | [https://crisisops-api.onrender.com/api/health](https://crisisops-api.onrender.com/api/health) |
+
+---
+
+## 14. Backend Setup Instructions
+
+### Prerequisites
+- **Python 3.10+** (Tested on Python 3.14)
+- **pip** and **virtualenv**
+
+### Installation
+```bash
+# 1. Clone repository
+git clone https://github.com/maitray-agrawal/CrisisOps.git
+cd CrisisOps
+
+# 2. Navigate to backend directory
+cd backend
+
+# 3. Create and activate a Python virtual environment
+python -m venv venv
+# On Windows PowerShell:
+.\venv\Scripts\Activate.ps1
+# On macOS / Linux:
+source venv/bin/activate
+
+# 4. Install dependencies
+pip install -r requirements.txt
+
+# 5. Start the backend development server
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+The canonical SQLite database (`backend/crisisops.db`) is automatically created and seeded with 10 machines, 8 incidents, 490 telemetry points, 8 SOPs, and audit logs on first startup.
+
+Interactive API documentation will be accessible at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+---
+
+## 15. Frontend Setup Instructions
+
+### Prerequisites
+- **Node.js 18.0+**
+- **npm 9.0+**
+
+### Installation
+```bash
+# 1. Navigate to frontend directory
+cd frontend
+
+# 2. Install dependencies
+npm install
+
+# 3. Start Vite development server
+npm run dev
+```
+
+The frontend will start at `http://localhost:5173`. By default, Vite proxies or communicates with the backend on `http://localhost:8000`.
+
+---
+
+## 16. Environment Variables
+
+CrisisOps provides safe, sensible defaults for all settings. Configure custom variables via `.env` files:
+
+### Backend (`backend/.env`)
+| Variable | Default Value | Description |
+| :--- | :--- | :--- |
+| `PROJECT_NAME` | `Industrial CrisisOps` | Application display name |
+| `VERSION` | `1.0.0` | Application release version |
+| `API_V1_STR` | `/api` | Root API route prefix |
+| `DATABASE_URL` | `sqlite:///./crisisops.db` | Normalized to `backend/crisisops.db` |
+| `CORS_ORIGINS` | `["http://localhost:5173","http://localhost:3000","https://crisisops.onrender.com"]` | Authorized CORS origins |
+| `ENV` | `development` | Operating environment (`development`, `production`) |
+| `DEBUG` | `True` | Verbose debug logging |
+
+### Frontend (`frontend/.env`)
+| Variable | Default Value | Description |
+| :--- | :--- | :--- |
+| `VITE_API_URL` | `http://localhost:8000` | Backend API base URL (`https://crisisops-api.onrender.com` in production) |
+
+---
+
+## 17. API Documentation & Core Endpoints
+
+CrisisOps exposes a comprehensive, RESTful OpenAPI specification:
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | System health check and database connection status |
+| `GET` | `/api/machines` | List all 10 registered machines with current telemetry and health scores |
+| `GET` | `/api/machines/{id}` | Detailed specification for a specific machine asset |
+| `GET` | `/api/machines/{id}/telemetry` | Retrieve chronological historical telemetry records |
+| `GET` | `/api/incidents` | List all plant incidents with status, severity, and timestamps |
+| `GET` | `/api/incidents/{id}` | Incident details, root cause findings, and active recommendations |
+| `POST` | `/api/incidents/{id}/recommendations/{rec_id}/approve` | **Approve** AI containment plan (Operator Authorization) |
+| `POST` | `/api/incidents/{id}/recommendations/{rec_id}/reject` | **Reject** AI containment plan with mandatory supervisor rationale |
+| `POST` | `/api/incidents/{id}/actuate` | Execute containment action (**Enforces HTTP 403 Safety Invariant**) |
+| `GET` | `/api/sops` | Full library of Standard Operating Procedures |
+| `GET` | `/api/sops/{code}` | Retrieve SOP markdown content, steps, and target equipment tags |
+| `GET` | `/api/audit/logs` | Fetch append-only SHA-256 audit ledger records |
+| `GET` | `/api/audit/verify` | Server-side cryptographic chain integrity verification |
+
+---
+
+## 18. Test Execution Instructions
+
+### Running the Backend Pytest Suite
+The backend features an isolated automated test suite covering API contracts, agent orchestrations, statistical detectors, actuation safety gates, and cryptographic audit chains.
 
 ```bash
-pytest backend/tests -v
+# From repository root
+.\backend\venv\Scripts\python -m pytest backend/tests -v
 ```
 
 ```
 ============================== test session starts ==============================
-platform win32 -- Python 3.14.0a4, pytest-8.3.4, pluggy-1.5.0
-rootdir: d:\CrisisOps
-collected 38 items
+collected 41 items
 
-backend/tests/test_actuation_engine.py ........                         [ 21%]
-backend/tests/test_agent_pipeline.py ...........                        [ 50%]
-backend/tests/test_agent_runtime.py .......                             [ 68%]
-backend/tests/test_audit_service.py ......                             [ 84%]
-backend/tests/test_detector.py ......                                  [100%]
+backend/tests/test_actuation_engine.py ........                         [ 19%]
+backend/tests/test_agent_pipeline.py ...........                        [ 46%]
+backend/tests/test_agent_runtime.py .......                             [ 63%]
+backend/tests/test_audit_service.py ......                             [ 78%]
+backend/tests/test_detector.py ......                                  [ 92%]
+backend/tests/test_qa_verification.py ...                               [100%]
 
-============================== 38 passed in 1.45s ===============================
+============================== 41 passed in 1.48s ===============================
 ```
+> **Test Isolation Notice**: Pytest operates against an isolated temporary test database (`backend/tests/test_crisisops.db`), ensuring test runs never modify or corrupt the canonical demonstration database.
 
-### Frontend Production Build
-The React TypeScript frontend builds cleanly with Vite:
-
+### Running Frontend Type-Check & Build
 ```bash
-cd frontend && npm run build
+# From repository root
+npm --prefix frontend run build
 ```
-
 ```
 vite v5.4.21 building for production...
-transforming...
 ✓ 44 modules transformed.
-rendering chunks...
-computing gzip size...
 dist/index.html                   0.80 kB │ gzip:  0.46 kB
 dist/assets/index-CoMWZSdS.css   12.14 kB │ gzip:  3.02 kB
 dist/assets/index-yw0xuABz.js   228.18 kB │ gzip: 64.07 kB
-✓ built in 1.06s
+✓ built in 0.82s
 ```
 
 ---
 
-## 🛠️ Quick Start Guide
+## 19. Known Limitations
 
-### Prerequisites
-* **Python 3.10+** (Tested on Python 3.14)
-* **Node.js 18+** & `npm`
-* **Git**
+To ensure engineering transparency and realistic evaluation, the following operational characteristics are explicitly noted:
 
-### 1. Clone Repository
-```bash
-git clone https://github.com/maitray-agrawal/CrisisOps.git
-cd CrisisOps
-```
-
-### 2. Backend Setup
-```bash
-# Navigate to backend
-cd backend
-
-# Create virtual environment (optional but recommended)
-python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On Linux/macOS:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run backend development server
-python -m uvicorn app.main:app --port 8000 --reload
-```
-*Backend API documentation available at `http://localhost:8000/docs`.*
-
-### 3. Frontend Setup
-```bash
-# Open a new terminal window in the project root
-cd frontend
-
-# Install dependencies
-npm install
-
-# Run frontend development server
-npm run dev
-```
-*Access the Mission Control Dashboard at `http://localhost:5173`.*
+1. **Simulated Telemetry Stream**: Telemetry records are generated via high-fidelity mathematical emulation rather than physical hardware SCADA/OPC-UA connections. Historical seeded data features 49 records per machine sampled at 30-minute intervals over a 24-hour baseline. The live monitoring view polls a simulated stream generator at 3-second intervals.
+2. **Heuristic Remaining Useful Life (RUL)**: Asset health scores and RUL estimates are calculated using deterministic degradation curves and linear operating hours heuristics rather than high-dimensional neural network models.
+3. **Illustrative Benchmark Analytics**: OEE (Overall Equipment Effectiveness), MTBF (Mean Time Between Failures), and MTTR (Mean Time to Repair) metrics in the Plant Analytics workspace utilize standard automotive manufacturing benchmarks scaled to the demonstration fleet.
+4. **Simulated Hardware Actuation**: Machine state changes, speed reductions, and motor shutdowns modify database registers and UI displays. Physical relays and programmable logic controllers (PLCs) are not actuated.
 
 ---
 
-## 📂 Repository Directory Structure
+## 20. Future Enhancements & Production Roadmap
 
-```
-CrisisOps/
-├── backend/
-│   ├── app/
-│   │   ├── agents/
-│   │   │   ├── agent_orchestrator.py   # Multi-Agent Pipeline Coordinator
-│   │   │   ├── impact_agent.py         # Financial Risk Assessment Agent
-│   │   │   ├── rca_agent.py            # Root Cause Analysis Agent
-│   │   │   ├── signal_agent.py         # Telemetry Signal Correlator Agent
-│   │   │   └── sop_agent.py            # TF-IDF SOP Retrieval Agent
-│   │   ├── api/
-│   │   │   ├── incidents.py            # Incident & Actuation Endpoints
-│   │   │   ├── investigation.py        # Agent Investigation Endpoints
-│   │   │   └── machines.py             # Machine Fleet Endpoints
-│   │   ├── db/
-│   │   │   ├── database.py             # SQLAlchemy Session Setup
-│   │   │   └── models.py               # ORM Database Models
-│   │   ├── schemas/
-│   │   │   └── schemas.py              # Pydantic Request/Response Models
-│   │   ├── services/
-│   │   │   ├── actuation_engine.py     # Containment Actuation & Safety Gate
-│   │   │   ├── audit_service.py        # SHA-256 Hash Chaining Service
-│   │   │   ├── detector.py             # Statistical Anomaly Detector
-│   │   │   └── replay_service.py       # Incident Timeline Replay Engine
-│   │   └── main.py                     # FastAPI Application Initialization
-│   ├── tests/
-│   │   ├── test_actuation_engine.py    # Actuation Invariant Tests
-│   │   ├── test_agent_pipeline.py      # End-to-End Pipeline Tests
-│   │   ├── test_audit_service.py       # Cryptographic Audit Tests
-│   │   └── test_detector.py            # Z-Score Anomaly Tests
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── DemoGuideModal.tsx      # 7-Act Keyboard Presentation Controls
-│   │   │   ├── HashVerifierModal.tsx   # Web Crypto SHA-256 Inspector Modal
-│   │   │   └── NavigationBar.tsx       # Top Application Header
-│   │   ├── pages/
-│   │   │   ├── DashboardPage.tsx       # Mission Control Dashboard
-│   │   │   ├── IncidentsPage.tsx       # Incident Investigation Workspace
-│   │   │   └── MachinesPage.tsx        # Fleet Telemetry Overview
-│   │   ├── services/
-│   │   │   └── api.ts                  # Axios API Service Layer
-│   │   ├── types/
-│   │   │   └── index.ts                # TypeScript Interfaces
-│   │   ├── App.tsx                     # Main Application Router
-│   │   └── index.css                   # Custom Industrial Dark Mode Styling
-│   ├── package.json
-│   └── vite.config.ts
-├── docs/
-│   └── screenshots/                    # Real Application Screenshots
-│       ├── 01-dashboard.png
-│       ├── 02-incidents-workspace.png
-│       ├── 03-sha256-inspector.png
-│       └── 04-fleet-monitoring.png
-├── ARCHITECTURE.md                     # Deep Technical Architecture Spec
-├── CHANGELOG.md                        # Version Release History
-├── DECISIONS.md                        # Architectural Decision Records (ADRs)
-├── PLAN.md                             # Project Milestone Roadmap
-└── README.md                           # Project Documentation
-```
+- [ ] **Hardware PLC Protocol Adapters**: Implement native OPC-UA and Modbus TCP connectors for live industrial PLCs (Siemens S7, Allen-Bradley ControlLogix).
+- [ ] **High-Velocity Time-Series Historian**: Transition long-term telemetry storage from SQLite to TimescaleDB or InfluxDB for multi-billion point industrial histories.
+- [ ] **Dense Vector SOP Retrieval**: Upgrade the TF-IDF SOP matcher to local ONNX-quantized vector embeddings (BGE-Small / MiniLM) for semantic procedure retrieval.
+- [ ] **Hardware Security Module (HSM) Signing**: Augment the SHA-256 audit ledger with Ed25519 digital signatures backed by hardware security modules (HSM) or smart card operator badges.
+- [ ] **Edge Gateway Packaging**: Containerize CrisisOps as a lightweight Docker container deployable on edge gateway hardware (Advantech, Siemens IPC).
 
 ---
 
-## 🎯 Architectural Trade-Offs & Production Roadmap
+## 21. Documentation Index
 
-### Current MVP Implementation Choices
-1. **Deterministic Rule-Based Multi-Agent Pipeline**: Chosen over probabilistic Cloud LLM calls to guarantee 100% deterministic latency (<50ms) and zero reliance on external network connectivity during industrial emergencies.
-2. **In-Memory TF-IDF SOP RAG**: Replaced heavy vector database dependencies (e.g., Pinecone/Milvus) with lightweight in-memory term-frequency scoring to ensure edge execution on lightweight plant gateway hardware.
-3. **Local Edge SQLite Storage**: Used for embedded edge deployment simplicity without external database server overhead.
+Detailed engineering documentation is available in the [`docs/`](docs/) directory:
 
-### Enterprise Production Roadmap
-* [ ] **Physical PLC Integration**: Replace simulated telemetry generators with native OPC-UA and Modbus TCP industrial protocol adapters.
-* [ ] **Time-Series Historian Storage**: Migrate telemetry storage to TimescaleDB or InfluxDB for multi-year high-frequency sensor logging.
-* [ ] **Vector SOP Embeddings**: Upgrade SOP retrieval to dense vector embeddings using local ONNX-quantized embedding models.
-* [ ] **HSM Key Signing**: Enhance SHA-256 audit ledger with Hardware Security Module (HSM) ed25519 digital signatures per operator transaction.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): Deep-dive system architecture, agent state machine, data models, and safety boundaries.
+- [docs/API_REFERENCE.md](docs/API_REFERENCE.md): Comprehensive API specifications, request schemas, status codes, and JSON payloads.
+- [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md): Evaluator demo script, 7-act walkthrough, hotkey reference, and verification checklist.
+- [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md): Independent production-readiness QA report, database audits, and verification test logs.
 
 ---
 
-## 📜 License
+## 22. License & Contribution
 
-This project is open-source software licensed under the [MIT License](LICENSE).
+Industrial CrisisOps is open-source software licensed under the **[MIT License](LICENSE)**.
+
+### Contributors
+- **Maitray Agrawal** — Lead Architect & Full-Stack Developer
+- Project developed for the **Astrax Hackathon Submission**
 
 ---
 

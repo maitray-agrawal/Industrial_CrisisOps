@@ -70,6 +70,52 @@ class ActuationEngine:
             "approved_at": datetime.now(timezone.utc).isoformat()
         }
 
+    def reject_action_plan(
+        self,
+        db: Session,
+        incident_id: str,
+        operator_name: str = "Shift Supervisor",
+        reason: str = "Manual on-site inspection requested before software containment"
+    ) -> Dict[str, Any]:
+        """
+        Registers human operator rejection / inspection request on incident response plan.
+        """
+        incident = db.query(Incident).filter(Incident.id == incident_id).first()
+        if not incident:
+            raise ValueError(f"Incident #{incident_id} not found.")
+
+        recommendations = db.query(ActionRecommendation).filter(ActionRecommendation.incident_id == incident_id).all()
+        for rec in recommendations:
+            rec.human_approved = False
+            rec.approved_by = f"REJECTED by {operator_name}"
+            rec.approved_at = datetime.now(timezone.utc)
+
+        incident.status = "INSPECTION_REQUESTED"
+        db.commit()
+
+        AuditService.record_event(
+            db=db,
+            incident_id=incident_id,
+            actor_type="HUMAN_OPERATOR",
+            actor_id=operator_name,
+            action_type="OPERATOR_REJECTED",
+            details={
+                "rejected_by": operator_name,
+                "reason": reason,
+                "status": "INSPECTION_REQUESTED",
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+        )
+
+        return {
+            "incident_id": incident_id,
+            "status": "INSPECTION_REQUESTED",
+            "human_approved": False,
+            "rejected_by": operator_name,
+            "reason": reason,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
     def execute_simulated_actuation(
         self,
         db: Session,

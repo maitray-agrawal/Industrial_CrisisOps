@@ -75,7 +75,7 @@ def get_machine_telemetry(
     return (
         db.query(TelemetryRecord)
         .filter(TelemetryRecord.machine_id == machine_id)
-        .order_by(TelemetryRecord.timestamp.asc())
+        .order_by(TelemetryRecord.timestamp.desc())
         .limit(limit)
         .all()
     )

@@ -86,10 +86,14 @@ class TelemetrySimulator:
                     vib = round(1.2 + random.uniform(-0.08, 0.08), 2)
                     temp = round(44.0 + random.uniform(-0.4, 0.4), 1)
                     output = round(150.0 + random.uniform(-0.5, 0.5), 1)
-                else:  # M-305
+                elif machine.id == "M-305":
                     vib = round(0.8 + random.uniform(-0.05, 0.05), 2)
                     temp = round(61.0 + random.uniform(-0.3, 0.3), 1)
                     output = round(500.0 + random.uniform(-1.0, 1.0), 1)
+                else:
+                    vib = round(1.1 + random.uniform(-0.06, 0.06), 2)
+                    temp = round(48.0 + random.uniform(-0.5, 0.5), 1)
+                    output = round((machine.rated_output_units or 100.0) + random.uniform(-0.5, 0.5), 1)
 
             # Evaluate telemetry for anomaly
             detection = AnomalyDetector.evaluate_telemetry(vib, temp, output)

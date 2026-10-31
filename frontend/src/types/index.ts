@@ -6,6 +6,16 @@ export interface Machine {
   status: 'NORMAL' | 'WARNING' | 'CRITICAL' | 'CONTAINED';
   description?: string;
   created_at: string;
+  equipment_category?: string;
+  manufacturer_model?: string;
+  criticality?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  health_score?: number;
+  last_maintenance_date?: string;
+  next_maintenance_date?: string;
+  vibration_threshold?: number;
+  temp_threshold?: number;
+  rated_output_units?: number;
+  output_unit_label?: string;
 }
 
 export interface TelemetryRecord {
@@ -112,6 +122,14 @@ export interface ImpactAssessment {
   summary: string;
   production_capacity_loss_pct: number;
   used_fallback: boolean;
+  currency?: string;
+  estimated_financial_loss_inr?: number;
+  production_speed_units_hr?: number;
+  production_units_affected?: number;
+  unit_value_inr?: number;
+  estimated_maintenance_cost_inr?: number;
+  formatted_inr?: string;
+  calculation_basis?: string;
 }
 
 export interface ActionStep {

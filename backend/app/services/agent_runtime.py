@@ -253,8 +253,8 @@ class AgentRuntime:
             state.risk_level = result.get("safety_risk_rating", "HIGH")
             downtime = result.get("estimated_downtime_hours", 24.0)
             loss = result.get("estimated_financial_loss_usd", 45000.0)
-            obs_summary = "Applied refinery loss model ($1,875/hr base rate)."
-            res_summary = f"Estimated loss: ${loss:,.0f} USD ({downtime:.0f} hours downtime risk)."
+            obs_summary = "Evaluated automotive production loss model (120 components/hr @ ₹850/unit)."
+            res_summary = f"Estimated production value affected: ₹3.06 lakh (₹{result.get('estimated_financial_loss_inr', 306000.0):,.0f} INR) across {downtime:.0f}h potential downtime."
 
         elif tool_name == "retrieve_relevant_sop":
             context["sop_data"] = result

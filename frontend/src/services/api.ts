@@ -141,6 +141,15 @@ export const apiService = {
     return handleResponse(res);
   },
 
+  async rejectPlan(incidentId: string, operatorName = 'Shift Supervisor', reason = 'Manual on-site inspection requested before containment'): Promise<any> {
+    const res = await fetch(`${API_BASE}/incidents/${encodeURIComponent(incidentId)}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ operator_name: operatorName, reason })
+    });
+    return handleResponse(res);
+  },
+
   async executeActuation(incidentId: string): Promise<any> {
     const res = await fetch(`${API_BASE}/incidents/${encodeURIComponent(incidentId)}/execute-actuation`, {
       method: 'POST'
