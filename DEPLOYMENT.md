@@ -80,7 +80,7 @@ If deploying manually without Blueprint:
 | `ENV` | `production` | Enables production runtime mode |
 | `DEBUG` | `False` | Disables debug logs & stack trace leak |
 | `DATABASE_URL` | `sqlite:///./crisisops.db` | Local SQLite database file path (resolved canonically) |
-| `CORS_ORIGINS` | `["https://vajra-astra.onrender.com", "https://vajra-mmx4.onrender.com", "https://crisisops.onrender.com"]` | Authorized CORS origins for frontend |
+| `CORS_ORIGINS` | `["https://vajra-astra.onrender.com", "https://vajra-mmx4.onrender.com"]` | Authorized CORS origins for frontend |
 
 ---
 

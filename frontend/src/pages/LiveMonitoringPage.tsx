@@ -54,7 +54,7 @@ export const LiveMonitoringPage: React.FC<LiveMonitoringPageProps> = ({
     fetchLiveTelemetry(true);
     const interval = setInterval(() => {
       fetchLiveTelemetry(false);
-    }, 3000);
+    }, 4000);
 
     const handleSimUpdate = () => fetchLiveTelemetry(false);
     window.addEventListener('simulation-updated', handleSimUpdate);
@@ -79,7 +79,7 @@ export const LiveMonitoringPage: React.FC<LiveMonitoringPageProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
             <h1 className="page-title">Live Sensor Monitoring & SCADA Telemetry</h1>
             <span className="badge badge-normal" style={{ fontSize: '0.7rem' }}>
-              3-SECOND POLL RATE • SIMULATED SCADA
+              4-SECOND POLL RATE • SIMULATED STREAM
             </span>
           </div>
           <p className="page-subtitle">

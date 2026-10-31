@@ -121,7 +121,7 @@ sequenceDiagram
 
 ## 4. Zero-Trust Safety & Human-in-the-Loop Architecture
 
-In industrial systems, unintended physical actuation can result in catastrophic equipment destruction or worker injury. CrisisOps implements a zero-trust safety model:
+In real-world industrial environments, unverified actuation presents severe operational risks. Server-side approval gate blocks simulated containment actuation until authorized, ensuring simulated state transitions strictly require operator verification:
 
 ```mermaid
 stateDiagram-v2
@@ -290,6 +290,6 @@ CrisisOps is configured for automated continuous deployment using Render infrast
 | **Backend API** | Web Service | Python 3.10+ | `backend` | `pip install -r requirements.txt` | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
 | **Frontend UI** | Static Site | Node.js | `frontend` | `npm ci && npm run build` | `./dist` (Rewrite `/*` to `/index.html`) |
 
-- **CORS Handling**: Backend pre-authorizes `https://vajra-astra.onrender.com`, `https://vajra-mmx4.onrender.com`, `https://crisisops.onrender.com`, and `http://localhost:5173`.
+- **CORS Handling**: Backend pre-authorizes `https://vajra-astra.onrender.com`, `https://vajra-mmx4.onrender.com`, and `http://localhost:5173`.
 - **Health Check**: Render monitors `GET /api/health` for zero-downtime health verification.
 

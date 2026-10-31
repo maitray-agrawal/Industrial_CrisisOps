@@ -192,7 +192,7 @@ CrisisOps ships with 10 pre-configured, domain-accurate automotive manufacturing
 
 ## 9. Human Approval & Zero-Trust Safety Architecture
 
-CrisisOps enforces an unbypassable server-side security constraint inside [`backend/app/services/actuation_engine.py`](file:///d:/Vajra/backend/app/services/actuation_engine.py).
+CrisisOps enforces an unbypassable safety invariant: the server-side approval gate blocks simulated containment actuation until authorized inside [`backend/app/services/actuation_engine.py`](file:///d:/Vajra/backend/app/services/actuation_engine.py).
 
 ```python
 # Actuation Security Invariant: backend/app/services/actuation_engine.py
@@ -243,27 +243,26 @@ The **Audit History & SHA-256 Inspector** (`frontend/src/pages/AuditHistoryPage.
 CrisisOps models industrial financial exposure using realistic Indian manufacturing metrics:
 
 ### Cost Components
-1. **Downtime & Capacity Loss**:
-   $$\text{Production Volume Lost} = \text{Hourly Rated Output} \times \text{Capacity Reduction \%} \times \text{Downtime Hours}$$
-   $$\text{Production Value Affected (₹)} = \text{Production Volume Lost} \times \text{Value per Unit (₹)}$$
+1. **Downtime & Production Volume Affected**:
+   $$\text{Production Volume Affected} = \text{Downtime Hours} \times \text{Line Output (components/hr)} = 3.0\text{ hrs} \times 120\text{ units/hr} = 360\text{ components}$$
+   $$\text{Production Value Affected (₹)} = \text{Production Volume Affected} \times \text{Illustrative Contribution Value per Unit (₹)}$$
 
 2. **Emergency Maintenance & Restoration**:
    $$\text{Maintenance Cost (₹)} = \text{Replacement Parts Cost (₹)} + (\text{Labor Hours} \times \text{Technician Hourly Rate (₹)})$$
 
-3. **Total Exposure**:
-   $$\text{Total Exposure (₹)} = \text{Production Value Affected} + \text{Maintenance Cost}$$
+3. **Total Estimated Exposure**:
+   $$\text{Total Estimated Exposure (₹)} = \text{Production Value Affected} + \text{Maintenance Cost}$$
 
 ### Concrete Case: PMP-204 Bearing Failure (`INC-M204-001`)
-- **Hourly Rated Output**: $120.0\text{ m}^3\text{/hr}$
-- **Operating Capacity Loss**: $35\%$
-- **Estimated Repair Window**: $12.0\text{ hours}$
-- **Production Lost**: $120.0 \times 0.35 \times 12.0 = 504.0\text{ m}^3$
-- **Illustrative Finished Component Value**: ₹607.14 per $\text{m}^3$ coolant equivalent
-- **Production Value Affected**: **₹3,06,000 (₹3.06 Lakh)**
-- **Emergency Bearing Kit (Kirloskar OEM)**: ₹25,000
+- **Estimated Repair Window**: $3.0\text{ hours}$
+- **Line Output Speed**: $120\text{ components/hr}$
+- **Production Volume Affected**: $3.0\text{ hrs} \times 120\text{ components/hr} = 360\text{ components}$
+- **Illustrative Contribution Value**: ₹850 per manufactured component *(illustrative plant baseline estimate, not a market selling price)*
+- **Production Value Affected**: $360 \times ₹850 =$ **₹3,06,000 (₹3.06 Lakh)**
+- **Emergency Bearing Kit (OEM Replacement)**: ₹25,000
 - **Mechanical Specialist Labor ($10\text{ hrs} \times ₹2,000/\text{hr}$)**: ₹20,000
 - **Total Emergency Maintenance Cost**: **₹45,000**
-- **Combined Financial Exposure**: **₹3,51,000 (₹3.51 Lakh)**
+- **Combined Estimated Exposure**: **₹3,51,000 (₹3.51 Lakh)**
 
 ---
 
@@ -371,7 +370,7 @@ CrisisOps provides safe, sensible defaults for all settings. Configure custom va
 | `VERSION` | `0.1.0` | Application release version |
 | `API_V1_STR` | `/api` | Root API route prefix |
 | `DATABASE_URL` | `sqlite:///./crisisops.db` | Normalized to `backend/crisisops.db` |
-| `CORS_ORIGINS` | `["http://localhost:5173","http://localhost:3000","https://vajra-astra.onrender.com","https://vajra-mmx4.onrender.com","https://crisisops.onrender.com"]` | Authorized CORS origins |
+| `CORS_ORIGINS` | `["http://localhost:5173","http://localhost:3000","https://vajra-astra.onrender.com","https://vajra-mmx4.onrender.com"]` | Authorized CORS origins |
 | `ENV` | `development` | Operating environment (`development`, `production`) |
 | `DEBUG` | `True` | Verbose debug logging |
 
@@ -451,7 +450,7 @@ dist/assets/index-5Ev5ISCc.js   335.88 kB │ gzip: 82.75 kB
 
 To ensure engineering transparency and realistic evaluation, the following operational characteristics are explicitly noted:
 
-1. **Simulated Telemetry Stream**: Telemetry records are generated via high-fidelity mathematical emulation rather than physical hardware SCADA/OPC-UA connections. Historical seeded data features 49 records per machine sampled at 30-minute intervals over a 24-hour baseline. The live monitoring view polls a simulated stream generator at 3-second intervals.
+1. **Simulated Telemetry Stream**: Telemetry records are generated via high-fidelity mathematical emulation rather than physical hardware SCADA/OPC-UA connections. Historical seeded data features 49 records per machine sampled at 30-minute intervals over a 24-hour baseline. The live monitoring view polls a simulated stream generator at 4-second intervals (0.25 Hz).
 2. **Heuristic Remaining Useful Life (RUL)**: Asset health scores and RUL estimates are calculated using deterministic degradation curves and linear operating hours heuristics rather than production machine-learning models.
 3. **Illustrative Benchmark Analytics**: OEE (Overall Equipment Effectiveness), MTBF (Mean Time Between Failures), and MTTR (Mean Time to Repair) metrics in the Plant Analytics workspace utilize standard automotive manufacturing benchmarks scaled to the demonstration fleet.
 4. **Simulated Hardware Actuation**: Machine state changes, speed reductions, and motor shutdowns modify database registers and UI displays. Physical relays and programmable logic controllers (PLCs) are not actuated.

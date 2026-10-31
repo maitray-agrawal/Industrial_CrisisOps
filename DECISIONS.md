@@ -83,7 +83,7 @@ Integrate a statistical Z-Score/EWMA telemetry baseline anomaly detector and equ
 Phase 3 requires transforming static baseline data into a dynamic operational pipeline capable of driving real-time frontend updates during live failure scenarios.
 
 ### Decision
-Implement `TelemetrySimulator`, `AnomalyDetector`, `MachineStateEngine`, and `IncidentEngine` in `backend/app/services/`, controlled via FastAPI simulation endpoints (`/api/simulation/tick`, `/api/simulation/reset`, `/api/simulation/trigger-degradation`). The React frontend polls the REST endpoints at a controlled 3-second interval with event-based instant updates.
+Implement `TelemetrySimulator`, `AnomalyDetector`, `MachineStateEngine`, and `IncidentEngine` in `backend/app/services/`, controlled via FastAPI simulation endpoints (`/api/simulation/tick`, `/api/simulation/reset`, `/api/simulation/trigger-degradation`). The React frontend polls the REST endpoints at a controlled 4-second interval with event-based instant updates.
 
 ### Rationale
 - Guarantees backend state consistency across all browser windows and API clients.

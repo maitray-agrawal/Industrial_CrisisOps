@@ -65,7 +65,7 @@ const DEMO_STEPS: DemoStep[] = [
     act: 5,
     title: 'Act 5 — Human-in-the-Loop Approval Gate',
     subtitle: 'Industrial Safety Boundary Enforced',
-    description: 'The platform prohibits autonomous physical actuation. The response plan is locked until the Shift Operator reviews evidence, verifies SOP-M204-BEARING, and toggles explicit authorization.',
+    description: 'Server-side approval gate blocks simulated containment actuation until authorized. The response plan is held until the Shift Operator reviews evidence, verifies SOP-M204-BEARING, and grants explicit authorization.',
     keyMetric: 'Gate Lock Status: REQUIRES OPERATOR APPROVAL',
     actionText: 'Review Approval Gate',
     actionType: 'navigate_incidents',
