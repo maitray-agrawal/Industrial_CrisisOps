@@ -160,7 +160,7 @@ For transaction $n$, the current hash $H_n$ is computed as:
 $$H_n = \text{SHA256}\left( \text{id}_n \parallel \text{timestamp}_n \parallel \text{actor\_type}_n \parallel \text{actor\_id}_n \parallel \text{action\_type}_n \parallel \text{details\_json}_n \parallel H_{n-1} \right)$$
 
 - Genesis Hash $H_0 = \text{"0" \times 64}$.
-- **Immutable Ledger**: Any alteration to record $k$ invalidates all subsequent hashes $H_{k}, H_{k+1}, \dots, H_n$.
+- **Tamper-Evident Ledger**: Any alteration to record $k$ invalidates all subsequent hashes $H_{k}, H_{k+1}, \dots, H_n$.
 - **Web Crypto Verification**: The client application uses `window.crypto.subtle.digest('SHA-256', ...)` to independently recalculate the chain and verify integrity with zero reliance on backend assertions.
 
 ---
@@ -290,5 +290,6 @@ CrisisOps is configured for automated continuous deployment using Render infrast
 | **Backend API** | Web Service | Python 3.10+ | `backend` | `pip install -r requirements.txt` | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
 | **Frontend UI** | Static Site | Node.js | `frontend` | `npm ci && npm run build` | `./dist` (Rewrite `/*` to `/index.html`) |
 
-- **CORS Handling**: Backend pre-authorizes `https://crisisops.onrender.com` and `http://localhost:5173`.
+- **CORS Handling**: Backend pre-authorizes `https://vajra-astra.onrender.com`, `https://vajra-mmx4.onrender.com`, `https://crisisops.onrender.com`, and `http://localhost:5173`.
 - **Health Check**: Render monitors `GET /api/health` for zero-downtime health verification.
+

@@ -16,10 +16,10 @@ services:
       - key: DATABASE_URL
         value: sqlite:///./crisisops.db
       - key: CORS_ORIGINS
-        value: '["https://crisisops.onrender.com"]'
+        value: '["https://vajra-astra.onrender.com", "https://vajra-mmx4.onrender.com", "https://crisisops.onrender.com"]'
 
   - type: web
-    name: crisisops
+    name: vajra-astra
     runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build

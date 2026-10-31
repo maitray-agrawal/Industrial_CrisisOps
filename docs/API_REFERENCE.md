@@ -446,3 +446,4 @@ Forces deterministic bearing degradation on pump `M-204` for live demo trigger.
 
 ### `POST /api/simulation/reset`
 Resets the simulation stream back to nominal operating baseline.
+

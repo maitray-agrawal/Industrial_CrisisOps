@@ -10,7 +10,8 @@ This document provides complete, step-by-step instructions for deploying **Indus
                           ┌───────────────────────────────┐
                           │   Render Static Site          │
                           │   (React 18 + Vite 5 SPA)     │
-                          │   https://crisisops.onrender.com │
+                          │   https://vajra-astra.onrender.com │
+                          │   (Mirror: vajra-mmx4)        │
                           └──────────────┬────────────────┘
                                          │
                                    HTTPS / REST API
@@ -33,7 +34,7 @@ This document provides complete, step-by-step instructions for deploying **Indus
 
 The application is deployed as two decoupled cloud services:
 1. **Backend Web Service (`crisisops-api`)**: Python FastAPI application running under Uvicorn with dynamic `$PORT` binding.
-2. **Frontend Static Site (`crisisops`)**: Pre-compiled React + Vite single page application with environment-driven API routing (`VITE_API_URL`).
+2. **Frontend Static Site (`vajra-astra`)**: Pre-compiled React + Vite single page application with environment-driven API routing (`VITE_API_URL`).
 
 ---
 
@@ -45,13 +46,13 @@ Render Blueprints allow deploying the entire stack in one click using the reposi
 1. Push your latest code to GitHub: `git push origin hackathon-crisisops`.
 2. Log in to [Render Dashboard](https://dashboard.render.com).
 3. Click **New +** → **Blueprint**.
-4. Connect your GitHub repository (`CrisisOps`) and select branch `hackathon-crisisops`.
+4. Connect your GitHub repository (`Industrial_CrisisOps`) and select branch `hackathon-crisisops`.
 
 ### Step 2: Approve & Deploy
 1. Render will automatically detect `render.yaml`.
 2. Review the detected services:
    - `crisisops-api` (Python Web Service)
-   - `crisisops` (Static Site)
+   - `vajra-astra` (Static Site)
 3. Click **Apply**.
 4. Render will build and deploy both services automatically.
 
@@ -79,16 +80,16 @@ If deploying manually without Blueprint:
 | `ENV` | `production` | Enables production runtime mode |
 | `DEBUG` | `False` | Disables debug logs & stack trace leak |
 | `DATABASE_URL` | `sqlite:///./crisisops.db` | Local SQLite database file path (resolved canonically) |
-| `CORS_ORIGINS` | `["https://crisisops.onrender.com"]` | Authorized CORS origin for frontend |
+| `CORS_ORIGINS` | `["https://vajra-astra.onrender.com", "https://vajra-mmx4.onrender.com", "https://crisisops.onrender.com"]` | Authorized CORS origins for frontend |
 
 ---
 
-### Service 2: Frontend (`crisisops`)
+### Service 2: Frontend (`vajra-astra`)
 
 | Configuration Field | Value |
 | :--- | :--- |
 | **Service Type** | Static Site |
-| **Name** | `crisisops` |
+| **Name** | `vajra-astra` |
 | **Environment** | Static |
 | **Root Directory** | `frontend` |
 | **Build Command** | `npm ci && npm run build` |
@@ -111,10 +112,10 @@ Add a rewrite rule under **Redirects/Rewrites**:
 
 - **Fresh Instance Startup**: When `crisisops-api` starts for the first time, `app/main.py` detects an empty database and automatically executes `seed_database_if_empty()`.
 - **Seeded Assets**:
-  - 10 Machines across Chakan MIDC Pune plant (`PMP-204`, `CNC-101`, `CNC-102`, `CMP-301`, `TUR-401`, etc.).
-  - Active Incident: `INC-M204-001` (Bearing Temperature Spikes & High Vibration).
-  - 8 SOP Documents: `SOP-M204-BEARING`, `SOP-COOLING-PUMP`, `SOP-POWER-GEN`, etc.
-  - 490 Telemetry points, 8 Maintenance Records, and SHA-256 Audit Trail.
+  - 10 Machines across Chakan MIDC Pune plant (`M-204`, `M-101`, `M-305`, `HYD-105`, `CON-401`, `WLD-202`, `MOT-110`, `CHL-501`, `PMP-102`, `CNC-102`).
+  - Active Incidents: `INC-M204-001` (Bearing Temperature & High Vibration), `INC-CMP301-002`, `INC-CNC101-003`.
+  - 8 SOP Documents: `SOP-M204-BEARING`, `SOP-CMP301-OVERHEAT`, `SOP-CNC101-VIBRATION`, `SOP-HYD105-PRESSURE`, `SOP-CON401-JAM`, `SOP-WLD202-FAIL`, `SOP-MOT110-THERMAL`, `SOP-LOTO-GENERAL`.
+  - 490 Telemetry points, 8 Maintenance Records, and tamper-evident SHA-256 Audit Trail.
 - **Idempotency**: Restarting or redeploying the backend will **not** reseed or wipe user actions unless the database file is deleted.
 
 ---

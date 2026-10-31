@@ -46,7 +46,7 @@ Each of the 10 navigation modules was audited for page loading, data source iden
 Direct SQL inspection of the SQLite database (`crisisops.db`) was performed to verify record counts, foreign keys, and chronological sanity.
 
 ### Exact Database Record Counts
-- **Registered Machines:** `10`
+- **Registered Machines:** `10` (`M-204`, `M-101`, `M-305`, `HYD-105`, `CON-401`, `WLD-202`, `MOT-110`, `CHL-501`, `PMP-102`, `CNC-102`)
 - **Incidents:** `8` (3 active demo scenarios + 5 historical resolved)
 - **Telemetry Records:** `490` (49 historical records per machine across 10 machines)
 - **Maintenance Records:** `8`

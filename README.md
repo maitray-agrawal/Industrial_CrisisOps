@@ -21,12 +21,12 @@ CrisisOps is an India-focused, agentic AI platform engineered for industrial inc
 
 In 24/7 continuous industrial manufacturing facilities — such as high-precision automotive component machining lines — equipment anomalies present critical operational bottlenecks:
 
-1. **Alarm Fatigue & Cognitive Overload**: SCADA and IoT sensor arrays broadcast thousands of data points per minute. During an anomaly, operators are inundated with raw threshold alarms without context, statistical significance, or severity hierarchy.
+1. **Alarm Fatigue & Cognitive Overload**: Sensor arrays broadcast thousands of data points per minute. During an anomaly, operators are inundated with raw threshold alarms without context, statistical significance, or severity hierarchy.
 2. **Siloed Diagnostics & Slow Root Cause Discovery**: Telemetry breaches are isolated from maintenance records, equipment overhaul histories, and operating limits. Determining why a pump bearing or CNC spindle is overheating requires manual cross-system log searching.
 3. **Unquantified Financial Exposure**: Plant leadership and shift supervisors lack real-time visibility into the rupee cost of active downtime, capacity reduction, scrap generation, and labor overtime during an unfolding incident.
 4. **Static, Paper-Based SOPs**: Standard Operating Procedures remain trapped in physical binders or static PDFs, causing delays in executing time-critical containment procedures.
 5. **Catastrophic Actuation Risk**: Black-box autonomous AI actuation presents unacceptable safety hazards if permitted to execute unvalidated speed or throttle adjustments on live machinery.
-6. **Unverifiable Compliance Records**: Post-incident auditing frequently suffers from incomplete or retroactively altered log files lacking mathematical proof of human authorization.
+6. **Unverifiable Compliance Records**: Post-incident auditing frequently suffers from incomplete or retroactively altered log files lacking verifiable proof of human authorization.
 
 ---
 
@@ -39,13 +39,13 @@ Industrial CrisisOps addresses these challenges with a deterministic, multi-agen
 - **India-Focused Plant Financial Modeling**: Computes downtime losses, capacity reductions, and repair costs denominated in Indian Rupees (₹ INR) for domestic manufacturing contexts.
 - **Zero-Trust Human Approval Invariant**: Enforces a strict server-side policy (`HTTP 403 Forbidden`) prohibiting containment actuation without cryptographic recording of human authorization.
 - **Cryptographic SHA-256 Audit Ledger**: Chains every telemetry breach, agent deduction, human authorization, and simulated actuation in a tamper-evident hash chain verifiable directly in the browser via the Web Crypto API.
-- **Dedicated 10-Module Operations Suite**: Provides distinct, role-tailored workspaces for Mission Control, Live SCADA Monitoring, Incident Investigation, Fleet Registry, Predictive Maintenance, SOP Library, Plant Analytics, Audit History, and System Configuration.
+- **Dedicated 10-Module Operations Suite**: Provides distinct, role-tailored workspaces for Overview, Incidents, Machines, Live Monitoring, Predictive Maintenance, SOP Library, AI Investigation, Reports & Analytics, Audit History, and System Settings.
 
 ---
 
 ## 3. Key Features
 
-- **Real-Time Fleet Telemetry (Simulated)**: Monitored view of 10 automotive line assets across Chakan MIDC, Pune with temperature, vibration, RPM, and pressure readings.
+- **Simulated Live Fleet Telemetry**: Monitored view of 10 automotive line assets across Chakan MIDC, Pune with temperature, vibration, RPM, and pressure readings.
 - **Statistical Anomaly Classification**: Highlights anomalies using rolling Z-scores ($Z = +3.83$ critical breach on bearing vibration).
 - **Automated Work Order Correlation**: Cross-references telemetry spikes with overdue maintenance logs (e.g., MNT-882 bearing replacement overdue by 60 days).
 - **Deterministic SOP Retrieval**: Keyword and TF-IDF matching indexes standard operating procedures (e.g., SOP-M204-BEARING) to generate step-by-step mitigation plans.
@@ -60,8 +60,8 @@ Industrial CrisisOps addresses these challenges with a deterministic, multi-agen
 
 ```mermaid
 flowchart TD
-    subgraph Data Layer & SCADA Emulation
-        SCADA[Simulated SCADA Stream] --> AD[Statistical Anomaly Detector]
+    subgraph Data Layer & Telemetry Emulation
+        SCADA[Simulated Telemetry Stream] --> AD[Statistical Anomaly Detector]
         DB[(Canonical SQLite DB)] <--> REPO[Data Repository Layer]
     end
 
@@ -121,7 +121,7 @@ The CrisisOps agent runtime executes a closed-loop investigation and recovery cy
 ```
                       [ Goal Formulation ]
                                 ↓
-                      [ Telemetry Stream ]
+                   [ Simulated Telemetry Stream ]
                                 ↓
                      [ Anomaly Detection ]
                       (Z-Score Threshold)
@@ -137,7 +137,7 @@ The CrisisOps agent runtime executes a closed-loop investigation and recovery cy
                                 ↓
                  [ Human Authorization Gate ]
                                 ↓
-                 [ Policy-Controlled Actuation ]
+                 [ Simulated Containment Actuation ]
                                 ↓
                    [ Quantitative Outcome ]
                     (Vibration / Temp Drop)
@@ -151,7 +151,7 @@ The CrisisOps agent runtime executes a closed-loop investigation and recovery cy
 4. **Quantify**: Calculates economic consequences of unmitigated failure in Indian Rupees.
 5. **Recommend**: Matches equipment tags and failure modes against standard operating procedures.
 6. **Gate**: Halts autonomous execution; demands human operator authorization.
-7. **Actuate & Verify**: Modifies simulated machinery operating parameters, verifies metric recovery, and seals the event to an immutable cryptographic audit ledger.
+7. **Actuate & Verify**: Modifies simulated machinery operating parameters, verifies metric recovery, and seals the event to a tamper-evident cryptographic audit ledger.
 
 ---
 
@@ -173,20 +173,20 @@ The CrisisOps agent runtime executes a closed-loop investigation and recovery cy
 
 ## 8. Sample Machine & Incident Dataset
 
-CrisisOps ships with 10 pre-configured, domain-accurate automotive manufacturing assets:
+CrisisOps ships with 10 pre-configured, domain-accurate automotive manufacturing assets verified against the canonical seed database:
 
-| Machine ID | Equipment Name | Category | Criticality | Nominal Baseline | Alert Threshold | Operational Role |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **M-204** | PMP-204 Centrifugal Coolant Pump | Centrifugal Pump | CRITICAL | $1.80\text{ mm/s}, 65.0^\circ\text{C}$ | $4.50\text{ mm/s}, 75.0^\circ\text{C}$ | Spindle cooling water circulation |
-| **M-101** | CNC-101 5-Axis Milling Centre | CNC Machining | HIGH | $0.80\text{ mm/s}, 52.0^\circ\text{C}$ | $2.50\text{ mm/s}, 68.0^\circ\text{C}$ | Engine cylinder block finishing |
-| **M-102** | CNC-102 High-Speed Turning Lathe | CNC Turning | HIGH | $0.95\text{ mm/s}, 48.0^\circ\text{C}$ | $2.80\text{ mm/s}, 65.0^\circ\text{C}$ | Transmission gear shaft turning |
-| **M-103** | CNC-103 Horizontal Machining | CNC Machining | MEDIUM | $1.10\text{ mm/s}, 55.0^\circ\text{C}$ | $3.00\text{ mm/s}, 70.0^\circ\text{C}$ | Transmission housing milling |
-| **M-201** | PMP-101 Primary Hydraulic Pump | Hydraulic Pump | CRITICAL | $1.50\text{ mm/s}, 58.0^\circ\text{C}$ | $4.00\text{ mm/s}, 72.0^\circ\text{C}$ | 200-bar stamping press hydraulics |
-| **M-301** | CMP-301 Rotary Screw Air Compressor | Air Compressor | HIGH | $1.60\text{ mm/s}, 68.0^\circ\text{C}$ | $4.20\text{ mm/s}, 82.0^\circ\text{C}$ | Shop-floor pneumatic tools supply |
-| **M-302** | CMP-302 Reciprocating Gas Compressor | Gas Compressor | HIGH | $2.10\text{ mm/s}, 72.0^\circ\text{C}$ | $4.80\text{ mm/s}, 85.0^\circ\text{C}$ | Nitrogen blanket purge system |
-| **M-401** | TUR-401 Auxiliary Steam Turbine | Co-Gen Turbine | CRITICAL | $1.20\text{ mm/s}, 78.0^\circ\text{C}$ | $3.50\text{ mm/s}, 92.0^\circ\text{C}$ | In-plant waste heat co-generation |
-| **M-501** | ROB-501 Robotic Spot Welding Cell | Industrial Robot | HIGH | $0.50\text{ mm/s}, 42.0^\circ\text{C}$ | $2.00\text{ mm/s}, 58.0^\circ\text{C}$ | BIW chassis unibody spot welding |
-| **M-601** | CON-601 Heavy Roller Conveyor | Material Handling | MEDIUM | $1.40\text{ mm/s}, 45.0^\circ\text{C}$ | $3.80\text{ mm/s}, 62.0^\circ\text{C}$ | Machining-to-assembly pallet line |
+| Machine ID | Equipment Name | Category | Criticality | Status | Nominal Baseline | Alert Threshold | Operational Role & Bay |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **M-204** | PMP-204 Centrifugal Coolant Pump | Centrifugal Pump | CRITICAL | CRITICAL | $1.80\text{ mm/s}, 65.0^\circ\text{C}$ | $4.50\text{ mm/s}, 75.0^\circ\text{C}$ | Line B - Cooling Water Circulation Bay |
+| **M-101** | CNC-101 5-Axis Machining Centre | CNC Machining Centre | HIGH | WARNING | $0.80\text{ mm/s}, 52.0^\circ\text{C}$ | $2.80\text{ mm/s}, 65.0^\circ\text{C}$ | Line A - Precision Machining Bay |
+| **M-305** | CMP-301 Rotary Screw Air Compressor | Air Compressor | HIGH | WARNING | $1.60\text{ mm/s}, 68.0^\circ\text{C}$ | $3.20\text{ mm/s}, 85.0^\circ\text{C}$ | Utility Plant - Air Header Bay 1 |
+| **HYD-105** | HYD-105 500T Hydraulic Forming Press | Hydraulic Press | HIGH | NORMAL | $1.50\text{ mm/s}, 50.0^\circ\text{C}$ | $3.00\text{ mm/s}, 60.0^\circ\text{C}$ | Press Shop - Line C |
+| **CON-401** | CON-401 Pallet Transfer Conveyor | Conveyor System | MEDIUM | NORMAL | $1.20\text{ mm/s}, 42.0^\circ\text{C}$ | $2.20\text{ mm/s}, 50.0^\circ\text{C}$ | Assembly Line B - Transfer Tunnel |
+| **WLD-202** | WLD-202 Robotic Spot Welding Cell | Robotic Welding Cell | HIGH | NORMAL | $0.50\text{ mm/s}, 40.0^\circ\text{C}$ | $2.00\text{ mm/s}, 55.0^\circ\text{C}$ | Robotic Fabrication Cell 2 |
+| **MOT-110** | MOT-110 75kW Induction Motor | Electric Motor | MEDIUM | NORMAL | $1.10\text{ mm/s}, 55.0^\circ\text{C}$ | $2.50\text{ mm/s}, 70.0^\circ\text{C}$ | Air Handling Unit 3 - Roof Bay |
+| **CHL-501** | CHL-501 Water-Cooled Screw Chiller | Industrial Chiller | HIGH | NORMAL | $1.30\text{ mm/s}, 38.0^\circ\text{C}$ | $2.80\text{ mm/s}, 45.0^\circ\text{C}$ | Utility Plant - Chiller Room |
+| **PMP-102** | PMP-102 Auxiliary Coolant Circulation Pump | Centrifugal Pump | MEDIUM | NORMAL | $1.60\text{ mm/s}, 58.0^\circ\text{C}$ | $4.00\text{ mm/s}, 70.0^\circ\text{C}$ | Line A - Coolant Station (Standby) |
+| **CNC-102** | CNC-102 4-Axis Machining Centre | CNC Machining Centre | HIGH | NORMAL | $0.90\text{ mm/s}, 50.0^\circ\text{C}$ | $2.80\text{ mm/s}, 65.0^\circ\text{C}$ | Line A - Precision Cell 2 |
 
 ---
 
@@ -208,8 +208,8 @@ if not recommendations or not any(r.human_approved for r in recommendations):
     )
 ```
 
-- Any attempt to invoke `POST /api/incidents/{incident_id}/actuate` without an approved recommendation returns **`403 Forbidden`**.
-- Approvals record the operator's badge ID, role, and timestamp, permanently logged to the immutable audit ledger.
+- Any attempt to invoke `POST /api/incidents/{incident_id}/actuate` or `/execute-actuation` without an approved recommendation returns **`403 Forbidden`**.
+- Approvals record the operator's name, role (e.g., "Shift Supervisor Deshmukh"), and timestamp, permanently logged to the tamper-evident audit ledger.
 
 ---
 
@@ -279,24 +279,25 @@ CrisisOps models industrial financial exposure using realistic Indian manufactur
 
 ### 3. Cryptographic SHA-256 Hash Verifier
 ![SHA-256 Inspector](docs/screenshots/03-sha256-inspector.png)
-*Figure 3: Web Crypto API client-side verification proving ledger continuity and mathematical immutability.*
+*Figure 3: Web Crypto API client-side verification proving ledger continuity and tamper-evident integrity.*
 
 ### 4. Fleet Telemetry & Asset Monitoring
 ![Fleet Monitoring](docs/screenshots/04-fleet-monitoring.png)
-*Figure 4: Real-time telemetry monitoring displaying temperature, vibration, and RPM envelopes across all 10 plant assets.*
+*Figure 4: Simulated live telemetry monitoring displaying temperature, vibration, and RPM envelopes across all 10 plant assets.*
 
 ---
 
 ## 13. Live Demo & Deployment Information
 
-CrisisOps is configured for zero-configuration cloud deployment on Render:
+CrisisOps is actively deployed and verified on Render:
 
-| Service | Component | Production URL |
-| :--- | :--- | :--- |
-| **Frontend UI** | React + Vite Static Web Service | [https://crisisops.onrender.com](https://crisisops.onrender.com) |
-| **Backend API** | FastAPI + Uvicorn Web Service | [https://crisisops-api.onrender.com](https://crisisops-api.onrender.com) |
-| **API Interactive Docs** | Swagger / OpenAPI UI | [https://crisisops-api.onrender.com/docs](https://crisisops-api.onrender.com/docs) |
-| **Health Check** | API System Status Endpoint | [https://crisisops-api.onrender.com/api/health](https://crisisops-api.onrender.com/api/health) |
+| Service | Component | Production URL | Status |
+| :--- | :--- | :--- | :--- |
+| **Frontend UI (Active)** | React + Vite Static Web Service | [https://vajra-astra.onrender.com](https://vajra-astra.onrender.com) | **Verified Active (HTTP 200)** |
+| **Frontend UI (Mirror)** | Render Service Domain | [https://vajra-mmx4.onrender.com](https://vajra-mmx4.onrender.com) | **Verified Active (HTTP 200)** |
+| **Backend API** | FastAPI + Uvicorn Web Service | [https://crisisops-api.onrender.com](https://crisisops-api.onrender.com) | **Verified Active (HTTP 200)** |
+| **API Interactive Docs** | Swagger / OpenAPI UI | [https://crisisops-api.onrender.com/docs](https://crisisops-api.onrender.com/docs) | **Verified Active (HTTP 200)** |
+| **Health Check** | API System Status Endpoint | [https://crisisops-api.onrender.com/api/health](https://crisisops-api.onrender.com/api/health) | **Verified Active (HTTP 200)** |
 
 ---
 
@@ -309,8 +310,8 @@ CrisisOps is configured for zero-configuration cloud deployment on Render:
 ### Installation
 ```bash
 # 1. Clone repository
-git clone https://github.com/maitray-agrawal/CrisisOps.git
-cd CrisisOps
+git clone https://github.com/maitray-agrawal/Industrial_CrisisOps.git
+cd Industrial_CrisisOps
 
 # 2. Navigate to backend directory
 cd backend
@@ -367,10 +368,10 @@ CrisisOps provides safe, sensible defaults for all settings. Configure custom va
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
 | `PROJECT_NAME` | `Industrial CrisisOps` | Application display name |
-| `VERSION` | `1.0.0` | Application release version |
+| `VERSION` | `0.1.0` | Application release version |
 | `API_V1_STR` | `/api` | Root API route prefix |
 | `DATABASE_URL` | `sqlite:///./crisisops.db` | Normalized to `backend/crisisops.db` |
-| `CORS_ORIGINS` | `["http://localhost:5173","http://localhost:3000","https://crisisops.onrender.com"]` | Authorized CORS origins |
+| `CORS_ORIGINS` | `["http://localhost:5173","http://localhost:3000","https://vajra-astra.onrender.com","https://vajra-mmx4.onrender.com","https://crisisops.onrender.com"]` | Authorized CORS origins |
 | `ENV` | `development` | Operating environment (`development`, `production`) |
 | `DEBUG` | `True` | Verbose debug logging |
 
@@ -393,13 +394,15 @@ CrisisOps exposes a comprehensive, RESTful OpenAPI specification:
 | `GET` | `/api/machines/{id}/telemetry` | Retrieve chronological historical telemetry records |
 | `GET` | `/api/incidents` | List all plant incidents with status, severity, and timestamps |
 | `GET` | `/api/incidents/{id}` | Incident details, root cause findings, and active recommendations |
-| `POST` | `/api/incidents/{id}/recommendations/{rec_id}/approve` | **Approve** AI containment plan (Operator Authorization) |
-| `POST` | `/api/incidents/{id}/recommendations/{rec_id}/reject` | **Reject** AI containment plan with mandatory supervisor rationale |
-| `POST` | `/api/incidents/{id}/actuate` | Execute containment action (**Enforces HTTP 403 Safety Invariant**) |
+| `POST` | `/api/incidents/{id}/investigate` | Triggers the 4-stage AI agent investigation pipeline |
+| `POST` | `/api/incidents/{id}/approve` | **Approve** AI containment plan (Operator Authorization) |
+| `POST` | `/api/incidents/{id}/reject` | **Reject** AI containment plan with mandatory supervisor rationale |
+| `POST` | `/api/incidents/{id}/execute-actuation` | Execute containment action (**Enforces HTTP 403 Safety Invariant**) |
 | `GET` | `/api/sops` | Full library of Standard Operating Procedures |
-| `GET` | `/api/sops/{code}` | Retrieve SOP markdown content, steps, and target equipment tags |
-| `GET` | `/api/audit/logs` | Fetch append-only SHA-256 audit ledger records |
-| `GET` | `/api/audit/verify` | Server-side cryptographic chain integrity verification |
+| `GET` | `/api/sops/{id}` | Retrieve SOP markdown content, steps, and target equipment tags |
+| `GET` | `/api/incidents/{id}/audit-trail` | Fetch append-only SHA-256 audit ledger records |
+| `GET` | `/api/incidents/{id}/audit-trail/verify` | Server-side cryptographic chain integrity verification |
+| `GET` | `/api/incidents/{id}/replay` | Generate chronological incident event replay timeline |
 
 ---
 
@@ -424,7 +427,7 @@ backend/tests/test_audit_service.py ......                             [ 78%]
 backend/tests/test_detector.py ......                                  [ 92%]
 backend/tests/test_qa_verification.py ...                               [100%]
 
-============================== 41 passed in 1.48s ===============================
+============================== 41 passed in 9.07s ===============================
 ```
 > **Test Isolation Notice**: Pytest operates against an isolated temporary test database (`backend/tests/test_crisisops.db`), ensuring test runs never modify or corrupt the canonical demonstration database.
 
@@ -435,11 +438,11 @@ npm --prefix frontend run build
 ```
 ```
 vite v5.4.21 building for production...
-✓ 44 modules transformed.
-dist/index.html                   0.80 kB │ gzip:  0.46 kB
-dist/assets/index-CoMWZSdS.css   12.14 kB │ gzip:  3.02 kB
-dist/assets/index-yw0xuABz.js   228.18 kB │ gzip: 64.07 kB
-✓ built in 0.82s
+✓ 53 modules transformed.
+dist/index.html                   0.82 kB │ gzip:  0.47 kB
+dist/assets/index-CSsOiZmW.css   15.46 kB │ gzip:  3.66 kB
+dist/assets/index-5Ev5ISCc.js   335.88 kB │ gzip: 82.75 kB
+✓ built in 2.02s
 ```
 
 ---
@@ -449,7 +452,7 @@ dist/assets/index-yw0xuABz.js   228.18 kB │ gzip: 64.07 kB
 To ensure engineering transparency and realistic evaluation, the following operational characteristics are explicitly noted:
 
 1. **Simulated Telemetry Stream**: Telemetry records are generated via high-fidelity mathematical emulation rather than physical hardware SCADA/OPC-UA connections. Historical seeded data features 49 records per machine sampled at 30-minute intervals over a 24-hour baseline. The live monitoring view polls a simulated stream generator at 3-second intervals.
-2. **Heuristic Remaining Useful Life (RUL)**: Asset health scores and RUL estimates are calculated using deterministic degradation curves and linear operating hours heuristics rather than high-dimensional neural network models.
+2. **Heuristic Remaining Useful Life (RUL)**: Asset health scores and RUL estimates are calculated using deterministic degradation curves and linear operating hours heuristics rather than production machine-learning models.
 3. **Illustrative Benchmark Analytics**: OEE (Overall Equipment Effectiveness), MTBF (Mean Time Between Failures), and MTTR (Mean Time to Repair) metrics in the Plant Analytics workspace utilize standard automotive manufacturing benchmarks scaled to the demonstration fleet.
 4. **Simulated Hardware Actuation**: Machine state changes, speed reductions, and motor shutdowns modify database registers and UI displays. Physical relays and programmable logic controllers (PLCs) are not actuated.
 

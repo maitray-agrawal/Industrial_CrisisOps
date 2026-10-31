@@ -45,7 +45,7 @@ Each of the 10 navigation modules was audited for page loading, data source iden
 Direct SQL inspection of the canonical SQLite database (`backend/crisisops.db`) was performed to verify record counts, foreign keys, and chronological sanity.
 
 ### Exact Database Record Counts
-- **Registered Machines:** `10`
+- **Registered Machines:** `10` (`M-204`, `M-101`, `M-305`, `HYD-105`, `CON-401`, `WLD-202`, `MOT-110`, `CHL-501`, `PMP-102`, `CNC-102`)
 - **Incidents:** `8` (3 active demo scenarios + 5 historical resolved)
 - **Telemetry Records:** `490` (49 historical records per machine across 10 machines)
 - **Maintenance Records:** `8`
@@ -55,7 +55,7 @@ Direct SQL inspection of the canonical SQLite database (`backend/crisisops.db`) 
 - **Evidence Items:** `6`
 
 ### Relational & Foreign Key Checks
-- **Incidents $\to$ Machines:** 8/8 valid. Zero orphan incidents.
+- **Incidents $\to$ Machines:** 8/8 valid. Zero orphan incidents (`INC-M204-001` $\to$ `M-204`, `INC-CMP301-002` $\to$ `M-305`, `INC-CNC101-003` $\to$ `M-101`, `INC-HYD105-004` $\to$ `HYD-105`, `INC-CON401-005` $\to$ `CON-401`, `INC-WLD202-006` $\to$ `WLD-202`, `INC-MOT110-007` $\to$ `MOT-110`, `INC-CHL501-008` $\to$ `CHL-501`).
 - **Maintenance Records $\to$ Machines:** 8/8 valid. Zero orphan maintenance records.
 - **Evidence $\to$ Incidents:** 6/6 valid.
 - **Action Recommendations $\to$ Incidents & SOPs:** 3/3 valid.
@@ -167,3 +167,4 @@ backend/tests/test_qa_verification.py ...                               [100%]
 - `test_audit_service.py`: Tests SHA-256 hash chaining, genesis hash binding, and tamper detection.
 - `test_detector.py`: Tests statistical baseline rolling mean, variance, and Z-score anomaly triggers.
 - `test_qa_verification.py`: Tests database isolation, supervisor rejection endpoint, and deterministic path normalization.
+
